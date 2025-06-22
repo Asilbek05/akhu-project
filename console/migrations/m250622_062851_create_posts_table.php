@@ -18,13 +18,13 @@ class m250622_062851_create_posts_table extends Migration
             'title' => $this->string()->notNull(),
             'slug' => $this->string()->notNull()->unique(),
             'content' => $this->text(),
-            'image' => $this->string(),
+            // Note: no `image` column, images stored in post_images
             'is_published' => $this->boolean()->defaultValue(1),
+            'view_count' => $this->integer()->defaultValue(0),
             'created_at' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
         ]);
 
-        // foreign key to user table
         $this->addForeignKey(
             'fk-posts-user_id',
             '{{%posts}}',
@@ -40,7 +40,7 @@ class m250622_062851_create_posts_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropForeignKey('fk-menus-parent_id', 'menus');
-        $this->dropTable('{{%menus}}');
+        $this->dropForeignKey('fk-posts-user_id', '{{%posts}}');
+        $this->dropTable('{{%posts}}');
     }
 }

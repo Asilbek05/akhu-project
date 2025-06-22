@@ -14,18 +14,24 @@ class m250622_061348_create_menus_table extends Migration
     {
         $this->createTable('{{%menus}}', [
             'id' => $this->primaryKey(),
-            'title' => $this->string(255),
-            'slug' => $this->string(255),
-            'parent_id' => $this->integer(),
+            'title' => $this->string()->notNull(),
+            'slug' => $this->string()->notNull(),
+            'parent_id' => $this->integer()->null(),
+            'content' => $this->text()->null(),
+            'order_num' => $this->integer()->defaultValue(0),
+            'isactive' => $this->boolean()->defaultValue(1),
+            'created_at' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
         ]);
 
+        // O'z-o'ziga bog'liq (self-referencing) foreign key qo‘shish (optional)
         $this->addForeignKey(
-            'fk-menus-parent_id',
-            'menus',
+            'fk_menus_parent',
+            '{{%menus}}',
             'parent_id',
-            'menus',
+            '{{%menus}}',
             'id',
-            'SET NULL'
+            'SET NULL',
+            'CASCADE'
         );
     }
 
@@ -34,7 +40,7 @@ class m250622_061348_create_menus_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropForeignKey('fk-menus-parent_id', 'menus');
+        $this->dropForeignKey('fk_menus_parent', '{{%menus}}');
         $this->dropTable('{{%menus}}');
     }
 }

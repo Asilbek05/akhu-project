@@ -35,6 +35,5 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     container_name: yii2-mysql
-
 volumes:
   mysql_data:

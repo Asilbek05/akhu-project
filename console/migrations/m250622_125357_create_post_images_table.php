@@ -29,7 +29,6 @@ class m250622_125357_create_post_images_table extends Migration
             'CASCADE'
         );
     }
-
     /**
      * {@inheritdoc}
      */
@@ -38,4 +37,6 @@ class m250622_125357_create_post_images_table extends Migration
         $this->dropForeignKey('fk-post_images-post_id', '{{%post_images}}');
         $this->dropTable('{{%post_images}}');
     }
+
 }
+

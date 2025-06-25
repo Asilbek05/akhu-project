@@ -10,6 +10,7 @@ return [
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
+    'layout' => '_main',
     'bootstrap' => ['log'],
     'modules' => [],
     'components' => [
@@ -42,6 +43,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'signup' => 'site/signup',
             ],
         ],
 

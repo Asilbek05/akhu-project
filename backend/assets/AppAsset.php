@@ -4,18 +4,22 @@ namespace backend\assets;
 
 use yii\web\AssetBundle;
 
-/**
- * Main backend application asset bundle.
- */
 class AppAsset extends AssetBundle
 {
-    public $basePath = '@webroot';
-    public $baseUrl = '@web';
+    public $basePath = '@webroot/metronic/assets';
+    public $baseUrl = '@web/metronic/assets';
+
     public $css = [
-        'css/site.css',
+        'https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700',
+        'plugins/global/plugins.bundle.css',
+        'css/style.bundle.css',
     ];
+
     public $js = [
+        'plugins/global/plugins.bundle.js',
+        'js/scripts.bundle.js',
     ];
+
     public $depends = [
         'yii\web\YiiAsset',
         'yii\bootstrap5\BootstrapAsset',

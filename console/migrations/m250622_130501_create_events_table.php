@@ -20,7 +20,6 @@ class m250622_130501_create_events_table extends Migration
             'end_date' => $this->date()->null(),
             'time' => $this->time()->null(),
             'description' => $this->text()->null(),
-            'poster' => $this->string()->null(),
             'views' => $this->integer()->notNull()->defaultValue(0),
             'created_at' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),

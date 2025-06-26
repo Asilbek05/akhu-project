@@ -2,8 +2,10 @@
 
 namespace backend\controllers;
 
+use common\models\Events;
 use common\models\EventSchedule;
 use common\models\EventScheduleSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -46,6 +48,25 @@ class EventScheduleController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+    //manage
+    public function actionManage($event_id)
+    {
+        $event = Events::findOne($event_id);
+        if (!$event) {
+            throw new NotFoundHttpException("Event not found.");
+        }
+
+        $schedules = EventSchedule::find()
+            ->where(['event_id' => $event_id])
+            ->orderBy(['sort_order' => SORT_ASC])
+            ->all();
+
+        return $this->render('manage', [
+            'event' => $event,
+            'schedules' => $schedules,
+        ]);
+    }
+
 
     /**
      * Displays a single EventSchedule model.
@@ -65,22 +86,18 @@ class EventScheduleController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($event_id)
     {
-        $model = new EventSchedule();
+        $model = new \common\models\EventSchedule();
+        $model->event_id = $event_id;
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['manage', 'event_id' => $event_id]);
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->render('create', ['model' => $model]);
     }
+
 
     /**
      * Updates an existing EventSchedule model.
@@ -92,14 +109,13 @@ class EventScheduleController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $event_id = $model->event_id;
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['manage', 'event_id' => $event_id]);
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        return $this->render('update', ['model' => $model]);
     }
 
     /**
@@ -111,9 +127,11 @@ class EventScheduleController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $event_id = $model->event_id;
+        $model->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['manage', 'event_id' => $event_id]);
     }
 
     /**

@@ -23,6 +23,21 @@ use Yii;
  */
 class Events extends \yii\db\ActiveRecord
 {
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \yii\behaviors\TimestampBehavior::class,
+                'attributes' => [
+                    self::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    self::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => function () {
+                    return date('Y-m-d H:i:s');
+                },
+            ],
+        ];
+    }
 
 
     /**
@@ -45,7 +60,7 @@ class Events extends \yii\db\ActiveRecord
             [['start_date', 'end_date', 'time', 'created_at', 'updated_at'], 'safe'],
             [['description'], 'string'],
             [['views'], 'integer'],
-            [['title', 'location', 'poster'], 'string', 'max' => 255],
+            [['title', 'location'], 'string', 'max' => 255],
         ];
     }
 
@@ -62,7 +77,6 @@ class Events extends \yii\db\ActiveRecord
             'end_date' => 'End Date',
             'time' => 'Time',
             'description' => 'Description',
-            'poster' => 'Poster',
             'views' => 'Views',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -78,5 +92,6 @@ class Events extends \yii\db\ActiveRecord
     {
         return $this->hasMany(EventSchedule::class, ['event_id' => 'id']);
     }
+
 
 }

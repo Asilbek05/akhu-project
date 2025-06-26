@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\Events;
 use common\models\EventsSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -38,14 +39,15 @@ class EventsController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new EventsSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $searchModel = new \common\models\EventsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
+
 
     /**
      * Displays a single Events model.
@@ -69,18 +71,16 @@ class EventsController extends Controller
     {
         $model = new Events();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Event muvaffaqiyatli yaratildi.');
+            return $this->redirect(['index']);
         }
 
         return $this->render('create', [
             'model' => $model,
         ]);
     }
+
 
     /**
      * Updates an existing Events model.
@@ -93,8 +93,9 @@ class EventsController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Event tahrirlandi.');
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [
@@ -112,7 +113,7 @@ class EventsController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+        Yii::$app->session->setFlash('info', 'Event o‘chirildi.');
         return $this->redirect(['index']);
     }
 

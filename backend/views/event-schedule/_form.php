@@ -8,26 +8,22 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="event-schedule-form">
+<div class="card card-body">
+    <h3><?= Html::encode($this->title) ?></h3>
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'event_id')->textInput() ?>
-
-    <?= $form->field($model, 'start_time')->textInput() ?>
-
-    <?= $form->field($model, 'end_time')->textInput() ?>
-
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'start_time')->textInput(['type' => 'time']) ?>
+    <?= $form->field($model, 'end_time')->textInput(['type' => 'time']) ?>
+    <?= $form->field($model, 'description')->textarea(['rows' => 3]) ?>
+    <?= $form->field($model, 'event_id')->hiddenInput()->label(false) ?>
 
-    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'sort_order')->textInput() ?>
-
-    <div class="form-group">
+    <div class="form-group mt-3">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Cancel', ['manage', 'event_id' => $model->event_id], ['class' => 'btn btn-secondary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
-
 </div>
+

@@ -8,40 +8,36 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="events-search">
-
-    <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); ?>
-
-    <?= $form->field($model, 'id') ?>
-
-    <?= $form->field($model, 'title') ?>
-
-    <?= $form->field($model, 'location') ?>
-
-    <?= $form->field($model, 'start_date') ?>
-
-    <?= $form->field($model, 'end_date') ?>
-
-    <?php // echo $form->field($model, 'time') ?>
-
-    <?php // echo $form->field($model, 'description') ?>
-
-    <?php // echo $form->field($model, 'poster') ?>
-
-    <?php // echo $form->field($model, 'views') ?>
-
-    <?php // echo $form->field($model, 'created_at') ?>
-
-    <?php // echo $form->field($model, 'updated_at') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+<div class="card mb-6">
+    <div class="card-header bg-light-success">
+        <h3 class="card-title text-success">Search Events</h3>
     </div>
+    <div class="card-body">
+        <?php $form = ActiveForm::begin([
+            'action' => ['index'],
+            'method' => 'get',
+            'options' => ['class' => 'row g-3']
+        ]); ?>
 
-    <?php ActiveForm::end(); ?>
+        <div class="col-md-6 col-lg-4">
+            <?= $form->field($model, 'title')->textInput([
+                'placeholder' => 'Enter event title',
+                'class' => 'form-control form-control-solid'
+            ]) ?>
+        </div>
 
+        <div class="col-md-6 col-lg-4">
+            <?= $form->field($model, 'location')->textInput([
+                'placeholder' => 'Enter location',
+                'class' => 'form-control form-control-solid'
+            ]) ?>
+        </div>
+
+        <div class="col-12 d-flex justify-content-end mt-3 gap-2">
+            <?= Html::resetButton('<i class="ki-duotone ki-cross fs-5"></i> Reset', ['class' => 'btn btn-light']) ?>
+            <?= Html::submitButton('<i class="ki-duotone ki-magnifier fs-5"></i> Search', ['class' => 'btn btn-success']) ?>
+        </div>
+
+        <?php ActiveForm::end(); ?>
+    </div>
 </div>

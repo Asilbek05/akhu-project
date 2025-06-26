@@ -72,4 +72,17 @@ class EventSchedule extends \yii\db\ActiveRecord
         return $this->hasOne(Events::class, ['id' => 'event_id']);
     }
 
+    public function beforeSave($insert)
+    {
+        if ($insert && $this->sort_order === null) {
+            $max = self::find()
+                ->where(['event_id' => $this->event_id])
+                ->max('sort_order');
+
+            $this->sort_order = $max ? $max + 1 : 1;
+        }
+
+        return parent::beforeSave($insert);
+    }
+
 }

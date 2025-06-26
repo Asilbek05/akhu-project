@@ -35,10 +35,16 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
             'yii\\bootstrap5\\' => 15,
             'yii\\' => 4,
         ),
+        'w' => 
+        array (
+            'wbraganca\\dynamicform\\' => 22,
+        ),
         'k' => 
         array (
+            'kartik\\time\\' => 12,
             'kartik\\plugins\\fileinput\\' => 25,
             'kartik\\file\\' => 12,
+            'kartik\\date\\' => 12,
             'kartik\\base\\' => 12,
         ),
         'f' => 
@@ -146,6 +152,14 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
         array (
             0 => __DIR__ . '/..' . '/yiisoft/yii2',
         ),
+        'wbraganca\\dynamicform\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/wbraganca/yii2-dynamicform',
+        ),
+        'kartik\\time\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-timepicker/src',
+        ),
         'kartik\\plugins\\fileinput\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/bootstrap-fileinput',
@@ -153,6 +167,10 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
         'kartik\\file\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-fileinput/src',
+        ),
+        'kartik\\date\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-datepicker/src',
         ),
         'kartik\\base\\' => 
         array (

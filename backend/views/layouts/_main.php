@@ -5,9 +5,6 @@
 use backend\assets\AppAsset;
 AppAsset::register($this);
 
-use yii\bootstrap5\BootstrapAsset;
-BootstrapAsset::register($this);
-
 use \backend\assets\DatatablesAsset;
 DatatablesAsset::register($this);
 
@@ -21,12 +18,11 @@ $this->beginPage();
 <head>
     <?= Html::csrfMetaTags() ?>
     <meta charset="<?= Yii::$app->charset ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <?= Html::csrfMetaTags() ?>
-    <title><?= Html::encode($this->title) ?></title>
-    <?php $this->head() ?>
     <?= Html::csrfMetaTags() ?>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?= Html::encode($this->title) ?></title>
+    <?php $this->head() ?>
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="<?= Yii::getAlias('@web') ?>/metronic/assets/media/logos/favicon.ico"/>
@@ -650,7 +646,11 @@ $this->beginPage();
 
 </div>
 
-<?php $this->endBody(); ?>
+
+
+    <?php $this->endBody(); ?>
 </body>
 </html>
 <?php $this->endPage(); ?>
+
+

@@ -13,7 +13,7 @@ class SettingsController extends Controller
     {
         $model = Settings::findOne(1);
         if (!$model) {
-            throw new NotFoundHttpException('Sozlamalar topilmadi.');
+            throw new NotFoundHttpException('not found.');
         }
         return $this->render('index', ['model' => $model]);
     }
@@ -22,7 +22,7 @@ class SettingsController extends Controller
     {
         $model = Settings::findOne($id);
         if (!$model) {
-            throw new NotFoundHttpException("Sozlamalar topilmadi.");
+            throw new NotFoundHttpException("not found.");
         }
 
         if ($model->load(Yii::$app->request->post())) {
@@ -37,11 +37,11 @@ class SettingsController extends Controller
                     $model->socials = Yii::$app->request->post('Settings')['socials'];
                     break;
                 default:
-                    throw new BadRequestHttpException('Noto‘g‘ri bo‘lim.');
+                    throw new BadRequestHttpException('Error');
             }
 
             if ($model->save()) {
-                Yii::$app->session->setFlash('success', 'Sozlama yangilandi');
+                Yii::$app->session->setFlash('success', 'Updated successfully.');
                 return $this->redirect(['index']);
             }
         }

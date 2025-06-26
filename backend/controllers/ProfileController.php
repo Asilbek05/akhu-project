@@ -13,13 +13,13 @@ class ProfileController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [ // Faqat login bo‘lgan foydalanuvchi
+            'access' => [
                 'class' => AccessControl::class,
                 'only' => ['index', 'change-password'],
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['@'], // authenticated users
+                        'roles' => ['@'],
                     ],
                 ],
             ],

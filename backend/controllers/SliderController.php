@@ -4,9 +4,12 @@ namespace backend\controllers;
 
 use common\models\Slider;
 use common\models\SliderSearch;
+use Yii;
+use yii\db\Exception;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * SliderController implements the CRUD actions for Slider model.
@@ -64,23 +67,39 @@ class SliderController extends Controller
      * Creates a new Slider model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
+     * @throws Exception
      */
+    // frontend/controllers/SliderController.php
     public function actionCreate()
     {
         $model = new Slider();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $file = UploadedFile::getInstance($model, 'background_image_file');
+
+            if ($file) {
+                $dir = Yii::getAlias('@frontend/web/uploads/sliders/');
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+
+                $fileName = uniqid() . '.' . $file->extension;
+                if ($file->saveAs($dir . $fileName)) {
+                    $model->background_image = '/uploads/sliders/' . $fileName;
+                }
+            }
+
+            if ($model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
-        } else {
-            $model->loadDefaultValues();
         }
-
         return $this->render('create', [
             'model' => $model,
         ]);
     }
+
+
+
 
     /**
      * Updates an existing Slider model.
@@ -91,16 +110,47 @@ class SliderController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = Slider::findOne($id);
+        if (!$model) {
+            throw new NotFoundHttpException('Slider not found.');
+        }
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $oldImage = $model->background_image;
+
+        if ($model->load(Yii::$app->request->post())) {
+            $file = UploadedFile::getInstance($model, 'background_image_file');
+
+            if ($file) {
+                if (!empty($oldImage)) {
+                    $oldFilePath = Yii::getAlias('@frontend/web') . $oldImage;
+                    if (file_exists($oldFilePath)) {
+                        unlink($oldFilePath);
+                    }
+                }
+
+                $dir = Yii::getAlias('@frontend/web/uploads/sliders/');
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+
+                $fileName = uniqid() . '.' . $file->extension;
+                $file->saveAs($dir . $fileName);
+                $model->background_image = '/uploads/sliders/' . $fileName;
+            } else {
+                $model->background_image = $oldImage;
+            }
+
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [
             'model' => $model,
         ]);
     }
+
+
 
     /**
      * Deletes an existing Slider model.
@@ -123,6 +173,8 @@ class SliderController extends Controller
      * @return Slider the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
+
+
     protected function findModel($id)
     {
         if (($model = Slider::findOne(['id' => $id])) !== null) {
@@ -131,4 +183,32 @@ class SliderController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    // actionMove // up, down
+    public function actionMove($id, $direction)
+    {
+        $model = \common\models\Slider::findOne($id);
+        if (!$model) return $this->redirect(['index']);
+
+        $op = $direction === 'up' ? '<' : '>';
+        $order = $direction === 'up' ? SORT_DESC : SORT_ASC;
+
+        $neighbor = \common\models\Slider::find()
+            ->where([$op, 'sort_order', $model->sort_order])
+            ->orderBy(['sort_order' => $order])
+            ->one();
+
+        if ($neighbor) {
+            $temp = $model->sort_order;
+            $model->sort_order = $neighbor->sort_order;
+            $neighbor->sort_order = $temp;
+
+            $model->save(false);
+            $neighbor->save(false);
+        }
+
+        return $this->redirect(['index']);
+    }
+
+
 }

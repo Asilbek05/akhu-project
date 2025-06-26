@@ -41,7 +41,7 @@ class SliderSearch extends Slider
      */
     public function search($params, $formName = null)
     {
-        $query = Slider::find();
+        $query = Slider::find()->orderBy(['sort_order' => SORT_ASC]);
 
         // add conditions that should always apply here
 

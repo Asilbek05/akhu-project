@@ -5,6 +5,9 @@
 use backend\assets\AppAsset;
 AppAsset::register($this);
 
+use yii\bootstrap5\BootstrapAsset;
+BootstrapAsset::register($this);
+
 use \backend\assets\DatatablesAsset;
 DatatablesAsset::register($this);
 
@@ -16,11 +19,13 @@ $this->beginPage();
     <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
+    <?= Html::csrfMetaTags() ?>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
+    <?= Html::csrfMetaTags() ?>
 
 
     <!-- Favicon -->

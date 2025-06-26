@@ -33,7 +33,7 @@ class Settings extends \yii\db\ActiveRecord
     {
         return [
             [['contacts', 'location', 'socials'], 'default', 'value' => null],
-            [['contacts', 'socials', 'created_at', 'updated_at'], 'safe'],
+            [['contacts', 'socials', 'location', 'created_at', 'updated_at'], 'safe'],
             [['location'], 'string', 'max' => 255],
         ];
     }
@@ -52,5 +52,25 @@ class Settings extends \yii\db\ActiveRecord
             'updated_at' => 'Updated At',
         ];
     }
+
+    public function beforeSave($insert)
+    {
+        if (is_array($this->contacts)) {
+            $this->contacts = json_encode($this->contacts);
+        }
+        if (is_array($this->socials)) {
+            $this->socials = json_encode($this->socials);
+        }
+        return parent::beforeSave($insert);
+    }
+
+    public function afterFind()
+    {
+        parent::afterFind();
+        $this->contacts = json_decode($this->contacts, true);
+        $this->socials = json_decode($this->socials, true);
+    }
+
+
 
 }

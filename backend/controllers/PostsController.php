@@ -2,11 +2,15 @@
 
 namespace backend\controllers;
 
+use common\models\PostImages;
 use common\models\Posts;
 use common\models\PostsSearch;
+
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * PostsController implements the CRUD actions for Posts model.
@@ -65,22 +69,45 @@ class PostsController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
+
     public function actionCreate()
     {
         $model = new Posts();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->user_id = Yii::$app->user->isGuest ? 1 : Yii::$app->user->id;
+            $model->slug = \yii\helpers\Inflector::slug($model->title);
+
+            if ($model->save()) {
+                $images = UploadedFile::getInstances($model, 'images');
+
+                $uploadDir = Yii::getAlias('@frontend/web/uploads/posts/');
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0775, true);
+                }
+
+                foreach ($images as $img) {
+                    $fileName = time() . '_' . Yii::$app->security->generateRandomString(8) . '.' . $img->extension;
+                    $uploadPath = $uploadDir . $fileName;
+
+                    if ($img->saveAs($uploadPath)) {
+                        $imageModel = new PostImages();
+                        $imageModel->post_id = $model->id;
+                        $imageModel->image = $fileName;
+                        $imageModel->save();
+                    }
+                }
+
                 return $this->redirect(['view', 'id' => $model->id]);
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
         return $this->render('create', [
             'model' => $model,
         ]);
     }
+
+
 
     /**
      * Updates an existing Posts model.
@@ -91,16 +118,60 @@ class PostsController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = Posts::findOne($id);
+        if (!$model) {
+            throw new NotFoundHttpException('Post not found.');
+        }
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->user_id = Yii::$app->user->isGuest ? 1 : Yii::$app->user->id;
+
+            if (empty($model->slug) && !empty($model->title)) {
+                $model->slug = \yii\helpers\Inflector::slug($model->title);
+            }
+
+            if ($model->save()) {
+                $images = UploadedFile::getInstances($model, 'images');
+
+                if (!empty($images)) {
+                    // 1. Eski rasm fayllarini papkadan o‘chiramiz
+                    $oldImages = PostImages::find()->where(['post_id' => $model->id])->all();
+                    foreach ($oldImages as $oldImage) {
+                        $filePath = Yii::getAlias('@frontend/web/uploads/posts/') . $oldImage->image;
+                        if (file_exists($filePath)) {
+                            @unlink($filePath);
+                        }
+                    }
+
+                    PostImages::deleteAll(['post_id' => $model->id]);
+
+                    $uploadDir = Yii::getAlias('@frontend/web/uploads/posts/');
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0775, true);
+                    }
+
+                    foreach ($images as $img) {
+                        $fileName = time() . '_' . Yii::$app->security->generateRandomString(8) . '.' . $img->extension;
+                        $uploadPath = $uploadDir . $fileName;
+
+                        if ($img->saveAs($uploadPath)) {
+                            $imageModel = new PostImages();
+                            $imageModel->post_id = $model->id;
+                            $imageModel->image = $fileName;
+                            $imageModel->save();
+                        }
+                    }
+                }
+
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [
             'model' => $model,
         ]);
     }
+
 
     /**
      * Deletes an existing Posts model.
@@ -115,6 +186,25 @@ class PostsController extends Controller
 
         return $this->redirect(['index']);
     }
+    public function actionToggleStatus($id)
+    {
+        $model = Posts::findOne($id);
+        if ($model) {
+            $model->is_published = !$model->is_published;
+            $model->save(false);
+        }
+
+        if (Yii::$app->request->isPjax) {
+            return $this->renderPartial('_grid', [
+                'dataProvider' => $this->getDataProvider(),
+                'searchModel' => $this->getSearchModel(),
+            ]);
+        }
+
+        return $this->redirect(['index']);
+    }
+
+
 
     /**
      * Finds the Posts model based on its primary key value.

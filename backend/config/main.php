@@ -26,6 +26,22 @@ return [
             // this is the name of the session cookie used for login on the backend
             'name' => 'advanced-backend',
         ],
+        'assetManager' => [
+            'bundles' => [
+                'kartik\form\ActiveFormAsset' => [
+                    'bsVersion' => '5'
+                ],
+                'kartik\file\FileInputAsset' => [
+                    'bsVersion' => '5'
+                ],
+            ],
+        ],
+        'urlManagerFrontend' => [
+            'class' => 'yii\web\UrlManager',
+            'baseUrl' => 'http://localhost:8080',
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+        ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
@@ -44,6 +60,9 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'signup' => 'site/signup',
+                '<controller:\w+>/<id:\d+>' => '<controller>/view',
+                '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
+                '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ],
         ],
 

@@ -35,6 +35,12 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
             'yii\\bootstrap5\\' => 15,
             'yii\\' => 4,
         ),
+        'k' => 
+        array (
+            'kartik\\plugins\\fileinput\\' => 25,
+            'kartik\\file\\' => 12,
+            'kartik\\base\\' => 12,
+        ),
         'f' => 
         array (
             'frontend\\tests\\' => 15,
@@ -139,6 +145,18 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
         'yii\\' => 
         array (
             0 => __DIR__ . '/..' . '/yiisoft/yii2',
+        ),
+        'kartik\\plugins\\fileinput\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/bootstrap-fileinput',
+        ),
+        'kartik\\file\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-fileinput/src',
+        ),
+        'kartik\\base\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-krajee-base/src',
         ),
         'frontend\\tests\\' => 
         array (

@@ -1,5 +1,6 @@
 <?php
 
+use kartik\file\FileInput;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -12,21 +13,26 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'user_id')->textInput() ?>
-
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'slug')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'image')->textInput(['maxlength' => true]) ?>
+    <div class="mb-3">
+        <?= $form->field($model, 'images[]', [
+            'template' => '{label}<div class="input-group">{input}</div>{hint}{error}',
+        ])->fileInput([
+            'multiple' => true,
+            'accept' => 'image/*',
+            'class' => 'form-control',
+        ])->label('Rasmlar tanlang') ?>
+    </div>
 
-    <?= $form->field($model, 'is_published')->textInput() ?>
 
-    <?= $form->field($model, 'created_at')->textInput() ?>
+    <?= $form->field($model, 'is_published')->checkbox([
+        'label' => 'Nashr qilish',
+    ]) ?>
 
-    <?= $form->field($model, 'updated_at')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

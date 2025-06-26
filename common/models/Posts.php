@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "posts".
@@ -22,7 +24,7 @@ use Yii;
  */
 class Posts extends \yii\db\ActiveRecord
 {
-
+    public $images;
 
     /**
      * {@inheritdoc}
@@ -35,17 +37,28 @@ class Posts extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                'value' => new Expression('NOW()'),
+            ],
+        ];
+    }
     public function rules()
     {
         return [
             [['content', 'image'], 'default', 'value' => null],
-            [['is_published'], 'default', 'value' => 1],
+            [['is_published'], 'boolean'],
+            [['is_published'], 'default', 'value' => 0],
             [['user_id', 'title', 'slug'], 'required'],
-            [['user_id', 'is_published'], 'integer'],
+            [['user_id'], 'integer'],
             [['content'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
-            [['title', 'slug', 'image'], 'string', 'max' => 255],
-            [['slug'], 'unique'],
+            [['title', 'slug'], 'string', 'max' => 255],
+            [['images'], 'file', 'extensions' => 'png, jpg, jpeg', 'maxFiles' => 10],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
@@ -87,5 +100,24 @@ class Posts extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+//
+//    public function beforeSave($insert)
+//    {
+//        if (parent::beforeSave($insert)) {
+//            if (Yii::$app->user && Yii::$app->user->id) {
+//                $this->user_id = Yii::$app->user->id;
+//            }
+//        }
+//        if (parent::beforeSave($insert)) {
+//            if (empty($this->slug)) {
+//                $slug = iconv('UTF-8', 'ASCII//TRANSLIT', $this->title);
+//                $slug = preg_replace('/[^a-z0-9]+/i', '-', $slug);
+//                $slug = strtolower(trim($slug, '-'));
+//                $this->slug = $slug;
+//            }
+//            return true;
+//        }
+//        return false;
+//    }
 
 }

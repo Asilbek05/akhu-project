@@ -8,36 +8,37 @@ use yii\widgets\ActiveForm;
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="posts-search">
+<div class="card border-0 shadow-sm mb-4" style="background-color: #1e1e2f;">
+    <div class="card-body">
+        <?php $form = ActiveForm::begin([
+            'action' => ['index'],
+            'method' => 'get',
+            'options' => ['class' => 'row g-3'],
+        ]); ?>
 
-    <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); ?>
+        <div class="col-md-6">
+            <?= $form->field($model, 'title')->textInput([
+                'placeholder' => 'Sarlavhadan qidirish...',
+                'class' => 'form-control',
+            ])->label(false) ?>
+        </div>
 
-    <?= $form->field($model, 'id') ?>
+        <div class="col-md-6">
+            <?= $form->field($model, 'slug')->textInput([
+                'placeholder' => 'Slug (manzil) bo‘yicha qidirish...',
+                'class' => 'form-control',
+            ])->label(false) ?>
+        </div>
 
-    <?= $form->field($model, 'user_id') ?>
+        <div class="col-12 d-flex justify-content-end">
+            <?= Html::submitButton('<i class="bi bi-search"></i> Qidirish', [
+                'class' => 'btn btn-primary me-2 px-4'
+            ]) ?>
+            <?= Html::a('<i class="bi bi-x-circle"></i> Tozalash', ['index'], [
+                'class' => 'btn btn-outline-secondary px-4'
+            ]) ?>
+        </div>
 
-    <?= $form->field($model, 'title') ?>
-
-    <?= $form->field($model, 'slug') ?>
-
-    <?= $form->field($model, 'content') ?>
-
-    <?php // echo $form->field($model, 'image') ?>
-
-    <?php // echo $form->field($model, 'is_published') ?>
-
-    <?php // echo $form->field($model, 'created_at') ?>
-
-    <?php // echo $form->field($model, 'updated_at') ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) ?>
+        <?php ActiveForm::end(); ?>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
 </div>

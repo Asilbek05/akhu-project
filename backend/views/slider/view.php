@@ -33,12 +33,25 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'description:ntext',
             'button_text',
-            'button_url:url',
-            'background_image',
+            'button_url',
             'sort_order',
+            [
+                'attribute' => 'background_image',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    if ($model->background_image) {
+                        return Html::img(Yii::$app->urlManagerFrontend->baseUrl . $model->background_image, [
+                            'style' => 'max-width: 300px; border: 1px solid #ccc; padding: 5px;'
+                        ]);
+                    } else {
+                        return '<span class="text-muted">Rasm yo‘q</span>';
+                    }
+                }
+            ],
             'created_at',
             'updated_at',
         ],
     ]) ?>
+
 
 </div>

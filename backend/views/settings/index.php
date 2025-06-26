@@ -1,42 +1,50 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Url;
+
+$this->title = 'Site Settings';
 ?>
-<div class="container mt-4">
-    <h2 class="mb-4">Settings</h2>
-
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card shadow border-primary">
-                <div class="card-body">
-                    <h5 class="card-title">Contacts</h5>
-                    <p class="card-text small text-muted">
-                        <?= nl2br(Html::encode(json_encode($model->contacts, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) ?>
-                    </p>
-                    <?= Html::a('Tahrirlash', ['update', 'section' => 'contacts'], ['class' => 'btn btn-outline-primary btn-sm']) ?>
-                </div>
-            </div>
+<div class="settings-index container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Settings</h5>
+            <?= Html::a('Tahrirlash', ['update-section', 'id' => $model->id, 'section' => 'contacts'], [
+                'class' => 'btn btn-warning btn-sm',
+            ]) ?>
         </div>
-
-        <div class="col-md-4">
-            <div class="card shadow border-success">
-                <div class="card-body">
-                    <h5 class="card-title">Location</h5>
-                    <p class="card-text small text-muted">
-                        <?= Html::encode($model->location) ?>
-                    </p>
-                    <?= Html::a('Tahrirlash', ['update', 'section' => 'location'], ['class' => 'btn btn-outline-success btn-sm']) ?>
+        <div class="card-body">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <h6 class="text-muted">Contacts</h6>
+                    <ul class="list-unstyled small">
+                        <?php if (is_array($model->contacts)): ?>
+                            <?php foreach ($model->contacts as $label => $value): ?>
+                                <li><strong><?= Html::encode($label) ?>:</strong> <?= Html::encode($value) ?></li>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <li class="text-muted">Not Found</li>
+                        <?php endif; ?>
+                    </ul>
                 </div>
-            </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card shadow border-secondary">
-                <div class="card-body">
-                    <h5 class="card-title">Socials</h5>
-                    <p class="card-text small text-muted">
-                        <?= nl2br(Html::encode(json_encode($model->socials, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) ?>
+                <div class="col-md-4">
+                    <h6 class="text-muted">Location</h6>
+                    <p class="small mb-0">
+                        <?= Html::encode($model->location ?: 'Ma`lumot yo‘q') ?>
                     </p>
-                    <?= Html::a('Tahrirlash', ['update', 'section' => 'socials'], ['class' => 'btn btn-outline-secondary btn-sm']) ?>
+                </div>
+
+                <div class="col-md-4">
+                    <h6 class="text-muted">Socials</h6>
+                    <ul class="list-unstyled small">
+                        <?php if (is_array($model->socials)): ?>
+                            <?php foreach ($model->socials as $platform => $url): ?>
+                                <li><strong><?= Html::encode($platform) ?>:</strong> <?= Html::encode($url) ?></li>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <li class="text-muted">Ma`lumot yo‘q</li>
+                        <?php endif; ?>
+                        </ul>
                 </div>
             </div>
         </div>

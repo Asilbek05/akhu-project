@@ -2,7 +2,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$this->title = 'Sozlamalarni tahrirlash';
+$this->title = 'Update Site Settings';
 ?>
 <div class="container mt-4">
     <h2 class="mb-4"><?= Html::encode($this->title) ?></h2>
@@ -71,7 +71,7 @@ $this->title = 'Sozlamalarni tahrirlash';
         </div>
 
         <div class="col-md-12 text-end">
-            <?= Html::submitButton('Saqlash', ['class' => 'btn btn-primary btn-lg']) ?>
+            <?= Html::submitButton('Save', ['class' => 'btn btn-primary btn-lg']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

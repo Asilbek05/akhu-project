@@ -2,8 +2,10 @@
 
 namespace backend\controllers;
 
+use common\models\Leadership;
 use common\models\LeadershipSections;
 use common\models\LeadershipSectionsSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -53,28 +55,55 @@ class LeadershipSectionsController extends Controller
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+
+    public function actionManage($leadership_id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        $leadership = Leadership::findOne($leadership_id);
+        if (!$leadership) {
+            throw new NotFoundHttpException("Leadership not found.");
+        }
+
+        $newSection = new LeadershipSections();
+        $newSection->leadership_id = $leadership_id;
+
+        if (Yii::$app->request->isPost && $newSection->load(Yii::$app->request->post())) {
+            if ($newSection->save()) {
+                Yii::$app->session->setFlash('success', 'Section added successfully.');
+                return $this->redirect(['manage', 'leadership_id' => $leadership_id]);
+            }
+        }
+
+        $dataProvider = new \yii\data\ActiveDataProvider([
+            'query' => LeadershipSections::find()
+                ->where(['leadership_id' => $leadership_id])
+                ->orderBy(['sort_order' => SORT_ASC]),
+            'pagination' => false,
+        ]);
+
+        return $this->render('manage', [
+            'leadership' => $leadership,
+            'newSection' => $newSection,
+            'dataProvider' => $dataProvider,
         ]);
     }
+
 
     /**
      * Creates a new LeadershipSections model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($leadership_id)
     {
         $model = new LeadershipSections();
+        $model->leadership_id = $leadership_id;
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        // Default sort_order
+        $maxSort = LeadershipSections::find()->where(['leadership_id' => $leadership_id])->max('sort_order');
+        $model->sort_order = $maxSort + 1;
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['manage', 'leadership_id' => $leadership_id]);
         }
 
         return $this->render('create', [
@@ -92,9 +121,9 @@ class LeadershipSectionsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $leadership_id = $model->leadership_id;
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['manage', 'leadership_id' => $leadership_id]);
         }
 
         return $this->render('update', [

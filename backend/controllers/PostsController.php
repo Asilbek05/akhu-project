@@ -80,7 +80,6 @@ class PostsController extends Controller
 
             if ($model->save()) {
                 $images = UploadedFile::getInstances($model, 'images');
-
                 $uploadDir = Yii::getAlias('@frontend/web/uploads/posts/');
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0775, true);
@@ -134,7 +133,6 @@ class PostsController extends Controller
                 $images = UploadedFile::getInstances($model, 'images');
 
                 if (!empty($images)) {
-                    // 1. Eski rasm fayllarini papkadan o‘chiramiz
                     $oldImages = PostImages::find()->where(['post_id' => $model->id])->all();
                     foreach ($oldImages as $oldImage) {
                         $filePath = Yii::getAlias('@frontend/web/uploads/posts/') . $oldImage->image;

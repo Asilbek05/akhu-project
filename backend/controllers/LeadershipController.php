@@ -4,9 +4,11 @@ namespace backend\controllers;
 
 use common\models\Leadership;
 use common\models\LeadershipSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * LeadershipController implements the CRUD actions for Leadership model.
@@ -68,19 +70,27 @@ class LeadershipController extends Controller
     public function actionCreate()
     {
         $model = new Leadership();
+        $model->scenario = 'create';
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->photoFile = UploadedFile::getInstance($model, 'photoFile');
+
+            if ($model->validate()) {
+                if ($model->photoFile) {
+                    $model->uploadPhoto();
+                }
+
+                if ($model->save(false)) {
+                    Yii::$app->session->setFlash('success', 'Leadership created successfully.');
+                    return $this->redirect(['index']);
+                }
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->render('create', ['model' => $model]);
     }
+
+
 
     /**
      * Updates an existing Leadership model.
@@ -91,17 +101,25 @@ class LeadershipController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = Leadership::findOne($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $model->scenario = 'update';
+        $oldPhoto = $model->photo;
+        if ($model->load(Yii::$app->request->post())) {
+            $model->photoFile = UploadedFile::getInstance($model, 'photoFile');
+
+            if ($model->photoFile) {
+                $model->uploadPhoto();
+            } else {
+                $model->photo = $oldPhoto;
+            }
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Leadership updated successfully.');
+                return $this->redirect(['index']);
+            }
         }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        return $this->render('update', ['model' => $model]);
     }
-
     /**
      * Deletes an existing Leadership model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

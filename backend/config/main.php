@@ -65,6 +65,7 @@ return [
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
                 'settings/update-section/<id:\d+>/<section:\w+>' => 'settings/update-section',
                 'event/<event_id:\d+>/schedules' => 'event-schedule/manage',
+                'leadership-sections/manage/<leadership_id:\d+>' => 'leadership-sections/manage',
             ],
         ],
 

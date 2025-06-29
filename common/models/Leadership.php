@@ -21,7 +21,23 @@ use Yii;
  */
 class Leadership extends \yii\db\ActiveRecord
 {
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \yii\behaviors\TimestampBehavior::class,
+                'attributes' => [
+                    self::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    self::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => function() {
+                    return date('Y-m-d H:i:s');
+                },
+            ],
+        ];
+    }
 
+    public $photoFile;
 
     /**
      * {@inheritdoc}
@@ -43,6 +59,9 @@ class Leadership extends \yii\db\ActiveRecord
             [['sort_order'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'position', 'email', 'phone', 'photo'], 'string', 'max' => 255],
+            [['photoFile'], 'required', 'on' => 'create'],
+            [['photoFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif', ],
+
         ];
     }
 
@@ -72,6 +91,37 @@ class Leadership extends \yii\db\ActiveRecord
     public function getLeadershipSections()
     {
         return $this->hasMany(LeadershipSections::class, ['leadership_id' => 'id']);
+    }
+
+    public function uploadPhoto()
+    {
+        if ($this->photoFile) {
+            $dir = Yii::getAlias('@frontend/web/uploads/leadership/');
+            if (!is_dir($dir)) {
+                mkdir($dir, 0775, true);
+            }
+
+            $filename = uniqid() . '.' . $this->photoFile->extension;
+            $path = $dir . $filename;
+
+            if ($this->photoFile->saveAs($path)) {
+                $this->photo = '/uploads/leadership/' . $filename;
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+
+
+    public function beforeSave($insert)
+    {
+        if ($insert && empty($this->sort_order)) {
+            $max = self::find()->max('sort_order');
+            $this->sort_order = $max + 1;
+        }
+        return parent::beforeSave($insert);
     }
 
 }

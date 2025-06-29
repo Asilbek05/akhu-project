@@ -67,4 +67,12 @@ class LeadershipSections extends \yii\db\ActiveRecord
         return $this->hasOne(Leadership::class, ['id' => 'leadership_id']);
     }
 
+    public function beforeValidate()
+    {
+        if ($this->isNewRecord && $this->sort_order === null) {
+            $maxSort = self::find()->where(['leadership_id' => $this->leadership_id])->max('sort_order');
+            $this->sort_order = $maxSort + 1;
+        }
+        return parent::beforeValidate();
+    }
 }

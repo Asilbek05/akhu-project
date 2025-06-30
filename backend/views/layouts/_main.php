@@ -571,7 +571,7 @@ $this->beginPage();
                         <div class="menu-item <?= $isUserActive ? 'here show' : '' ?>">
                             <a href="<?= \yii\helpers\Url::to(['/user/index']) ?>" class="menu-link <?= $isUserActive ? 'active' : '' ?>">
         <span class="menu-icon">
-            <i class="ki-outline ki-user fs-2"></i> <!-- Userlar uchun icon -->
+            <i class="ki-outline ki-user fs-2"></i>
         </span>
                                 <span class="menu-title">Users</span>
                             </a>
@@ -598,7 +598,29 @@ $this->beginPage();
                 <!--begin::Content-->
                 <div id="kt_app_content" class="app-content flex-column-fluid">
                     <div class="container-xxl">
-                        <?= \common\widgets\Alert::widget() ?>
+                        <?php
+                        use kartik\growl\Growl;
+
+                        foreach (Yii::$app->session->getAllFlashes() as $type => $message) {
+                            echo Growl::widget([
+                                'type' => $type,
+                                'title' => strtoupper($type),
+                                'icon' => 'bi bi-info-circle',
+                                'body' => $message,
+                                'showSeparator' => true,
+                                'delay' => 0,
+                                'pluginOptions' => [
+                                    'allow_dismiss' => false,
+                                    'showProgressbar' => true,
+                                    'delay' => 4000,
+                                    'placement' => [
+                                        'from' => 'bottom',
+                                        'align' => 'right',
+                                    ]
+                                ]
+                            ]);
+                        }
+                        ?>
                         <?= $content ?>
                     </div>
                 </div>

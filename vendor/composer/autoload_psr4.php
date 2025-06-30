@@ -16,6 +16,7 @@ return array(
     'wbraganca\\dynamicform\\' => array($vendorDir . '/wbraganca/yii2-dynamicform'),
     'kartik\\time\\' => array($vendorDir . '/kartik-v/yii2-widget-timepicker/src'),
     'kartik\\plugins\\fileinput\\' => array($vendorDir . '/kartik-v/bootstrap-fileinput'),
+    'kartik\\growl\\' => array($vendorDir . '/kartik-v/yii2-widget-growl/src'),
     'kartik\\file\\' => array($vendorDir . '/kartik-v/yii2-widget-fileinput/src'),
     'kartik\\date\\' => array($vendorDir . '/kartik-v/yii2-widget-datepicker/src'),
     'kartik\\base\\' => array($vendorDir . '/kartik-v/yii2-krajee-base/src'),

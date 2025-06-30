@@ -41,7 +41,7 @@ class SettingsController extends Controller
             }
 
             if ($model->save()) {
-                Yii::$app->session->setFlash('success', 'Updated successfully.');
+                Yii::$app->session->setFlash('info', 'Updated successfully.');
                 return $this->redirect(['index']);
             }
         }

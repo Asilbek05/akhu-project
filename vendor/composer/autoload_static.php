@@ -43,6 +43,7 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
         array (
             'kartik\\time\\' => 12,
             'kartik\\plugins\\fileinput\\' => 25,
+            'kartik\\growl\\' => 13,
             'kartik\\file\\' => 12,
             'kartik\\date\\' => 12,
             'kartik\\base\\' => 12,
@@ -163,6 +164,10 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
         'kartik\\plugins\\fileinput\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/bootstrap-fileinput',
+        ),
+        'kartik\\growl\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-growl/src',
         ),
         'kartik\\file\\' => 
         array (

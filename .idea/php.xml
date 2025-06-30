@@ -103,6 +103,7 @@
       <path value="$PROJECT_DIR$/vendor/kartik-v/yii2-widget-datepicker" />
       <path value="$PROJECT_DIR$/vendor/kartik-v/yii2-widget-timepicker" />
       <path value="$PROJECT_DIR$/vendor/wbraganca/yii2-dynamicform" />
+      <path value="$PROJECT_DIR$/vendor/kartik-v/yii2-widget-growl" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4">

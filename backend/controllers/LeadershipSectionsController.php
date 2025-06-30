@@ -87,7 +87,6 @@ class LeadershipSectionsController extends Controller
         ]);
     }
 
-
     /**
      * Creates a new LeadershipSections model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -97,15 +96,12 @@ class LeadershipSectionsController extends Controller
     {
         $model = new LeadershipSections();
         $model->leadership_id = $leadership_id;
-
-        // Default sort_order
         $maxSort = LeadershipSections::find()->where(['leadership_id' => $leadership_id])->max('sort_order');
         $model->sort_order = $maxSort + 1;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['manage', 'leadership_id' => $leadership_id]);
         }
-
         return $this->render('create', [
             'model' => $model,
         ]);
@@ -125,7 +121,6 @@ class LeadershipSectionsController extends Controller
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['manage', 'leadership_id' => $leadership_id]);
         }
-
         return $this->render('update', [
             'model' => $model,
         ]);

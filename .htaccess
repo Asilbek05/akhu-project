@@ -1,0 +1,6 @@
+RewriteEngine on
+
+# Redirect everything to frontend/web unless it's backend
+RewriteCond %{REQUEST_URI} !^/backend/web
+RewriteCond %{REQUEST_URI} !^/frontend/web
+RewriteRule ^ frontend/web/ [L]

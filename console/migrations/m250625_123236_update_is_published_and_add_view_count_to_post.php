@@ -9,11 +9,14 @@ class m250625_123236_update_is_published_and_add_view_count_to_post extends Migr
      */
     public function safeUp()
     {
+        // Make sure is_published is boolean with default 0
         $this->alterColumn('{{%posts}}', 'is_published', $this->boolean()->defaultValue(0));
 
-
-        $this->addColumn('{{%posts}}', 'view_count', $this->integer()->defaultValue(0)->after('is_published'));
-
+        // Check if 'view_count' already exists before adding
+        $table = Yii::$app->db->schema->getTableSchema('{{%posts}}');
+        if (!isset($table->columns['view_count'])) {
+            $this->addColumn('{{%posts}}', 'view_count', $this->integer()->defaultValue(0)->after('is_published'));
+        }
     }
 
     /**
@@ -21,25 +24,13 @@ class m250625_123236_update_is_published_and_add_view_count_to_post extends Migr
      */
     public function safeDown()
     {
-        $this->dropColumn('{{%posts}}', 'view_count');
+        // Drop column only if exists
+        $table = Yii::$app->db->schema->getTableSchema('{{%posts}}');
+        if (isset($table->columns['view_count'])) {
+            $this->dropColumn('{{%posts}}', 'view_count');
+        }
 
-
+        // Revert column type back to integer with default 0
         $this->alterColumn('{{%posts}}', 'is_published', $this->integer()->defaultValue(0));
-
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m250625_123236_update_is_published_and_add_view_count_to_post cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

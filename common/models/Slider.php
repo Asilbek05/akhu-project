@@ -42,10 +42,9 @@ class Slider extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'required'],
+            [['background_image', 'description', 'button_text', 'button_url'], 'required'],
             [['description'], 'string'],
             [['sort_order'], 'integer'],
-            [['description', 'button_text', 'button_url', 'background_image'], 'default', 'value' => null],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'button_text', 'button_url', 'background_image'], 'string', 'max' => 255],
             [['background_image_file'], 'file', 'extensions' => 'jpg, png, jpeg, gif', 'skipOnEmpty' => true],

@@ -14,9 +14,9 @@ class m250622_135122_create_settings_table extends Migration
     {
         $this->createTable('{{%settings}}', [
             'id' => $this->primaryKey(),
-            'contacts' => $this->json()->null(),     // phone, email, admission_email
-            'location' => $this->string()->null(),   // Address or campus location
-            'socials' => $this->json()->null(),      // telegram, instagram, facebook, youtube
+            'contacts' => $this->json()->null(),
+            'location' => $this->string()->null(),
+            'socials' => $this->json()->null(),
             'created_at' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
         ]);

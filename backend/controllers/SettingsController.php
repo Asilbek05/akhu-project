@@ -1,9 +1,9 @@
 <?php
-
 namespace backend\controllers;
 
 use Yii;
 use common\models\Settings;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -39,13 +39,11 @@ class SettingsController extends Controller
                 default:
                     throw new BadRequestHttpException('Error');
             }
-
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', 'Updated successfully.');
                 return $this->redirect(['index']);
             }
         }
-
         return $this->render('update', [
             'model' => $model,
             'section' => $section,

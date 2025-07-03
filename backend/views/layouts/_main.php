@@ -5,8 +5,6 @@
 use backend\assets\AppAsset;
 AppAsset::register($this);
 
-use \backend\assets\DatatablesAsset;
-DatatablesAsset::register($this);
 
 use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
@@ -16,7 +14,6 @@ $this->beginPage();
     <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
-    <?= Html::csrfMetaTags() ?>
     <meta charset="<?= Yii::$app->charset ?>">
     <?= Html::csrfMetaTags() ?>
 
@@ -26,7 +23,6 @@ $this->beginPage();
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="<?= Yii::getAlias('@web') ?>/metronic/assets/media/logos/favicon.ico"/>
-
 
     <!-- Google Tag Manager (optional) -->
     <script>
@@ -409,12 +405,10 @@ $this->beginPage();
     <!--begin::Wrapper-->
     <div class="app-wrapper  flex-column flex-row-fluid " id="kt_app_wrapper">
 
-
         <!--begin::Sidebar-->
         <div id="kt_app_sidebar" class="app-sidebar  flex-column "
              data-kt-drawer="true" data-kt-drawer-name="app-sidebar" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="250px" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_sidebar_mobile_toggle"
         >
-
             <!--begin::Wrapper-->
             <div
                     id="kt_app_sidebar_wrapper"
@@ -600,26 +594,28 @@ $this->beginPage();
                     <div class="container-xxl">
                         <?php
                         use kartik\growl\Growl;
-
-                        foreach (Yii::$app->session->getAllFlashes() as $type => $message) {
-                            echo Growl::widget([
-                                'type' => $type,
-                                'title' => strtoupper($type),
-                                'icon' => 'bi bi-info-circle',
-                                'body' => $message,
-                                'showSeparator' => true,
-                                'delay' => 0,
-                                'pluginOptions' => [
-                                    'allow_dismiss' => false,
-                                    'showProgressbar' => true,
-                                    'delay' => 4000,
-                                    'placement' => [
-                                        'from' => 'bottom',
-                                        'align' => 'right',
+                        if (!empty(Yii::$app->session->getAllFlashes())){
+                            foreach (Yii::$app->session->getAllFlashes() as $type => $message) {
+                                echo Growl::widget([
+                                    'type' => $type,
+                                    'title' => strtoupper($type),
+                                    'icon' => 'bi bi-info-circle',
+                                    'body' => $message,
+                                    'showSeparator' => true,
+                                    'delay' => 0,
+                                    'pluginOptions' => [
+                                        'allow_dismiss' => false,
+                                        'showProgressbar' => true,
+                                        'delay' => 4000,
+                                        'placement' => [
+                                            'from' => 'bottom',
+                                            'align' => 'right',
+                                        ]
                                     ]
-                                ]
-                            ]);
+                                ]);
+                            }
                         }
+
                         ?>
                         <?= $content ?>
                     </div>
@@ -667,8 +663,34 @@ $this->beginPage();
 
 
 </div>
-
-
+<!--    --><?php
+//    $this->registerJsFile('@web/metronic/assets/plugins/global/plugins.bundle.js', [
+//        'depends' => [\yii\web\JqueryAsset::class],
+//        'position' => \yii\web\View::POS_END,
+//    ]);
+//
+//    $this->registerJsFile('@web/metronic/assets/js/scripts.bundle.js', [
+//        'depends' => [\yii\web\JqueryAsset::class],
+//        'position' => \yii\web\View::POS_END,
+//    ]);
+//
+//    // Yii gridview ishlashi uchun
+//    $this->registerJsFile('@web/assets/' . Yii::$app->assetManager->getBundle('yii\\grid\\GridViewAsset')->sourcePath . '/yii.gridView.js', [
+//        'depends' => [\yii\web\JqueryAsset::class],
+//        'position' => \yii\web\View::POS_END,
+//    ]);
+//    $controller = Yii::$app->controller->id;
+//    if ($controller === 'events') {
+//        $this->registerJsFile('@web/metronic/assets/plugins/custom/fullcalendar/fullcalendar.bundle.js', [
+//            'depends' => [\yii\web\JqueryAsset::class],
+//            'position' => \yii\web\View::POS_END,
+//        ]);
+//    }
+//    if ($controller === 'dashboard') {
+//        $this->registerJsFile('@web/metronic/assets/js/widgets.bundle.js', ['position' => \yii\web\View::POS_END]);
+//        $this->registerJsFile('https://cdn.amcharts.com/lib/5/index.js', ['position' => \yii\web\View::POS_END]);
+//    }
+//    ?>
 
     <?php $this->endBody(); ?>
 </body>

@@ -136,10 +136,8 @@ class LeadershipSectionsController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
         return $this->redirect(['index']);
     }
-
     /**
      * Finds the LeadershipSections model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

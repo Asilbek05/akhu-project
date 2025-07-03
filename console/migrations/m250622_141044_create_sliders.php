@@ -22,6 +22,7 @@ class m250622_141044_create_sliders extends Migration
         ]);
     }
 
+
     /**
      * {@inheritdoc}
      */

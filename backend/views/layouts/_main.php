@@ -20,41 +20,46 @@ $this->beginPage();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-
-    <!-- Favicon -->
     <link rel="shortcut icon" href="<?= Yii::getAlias('@web') ?>/metronic/assets/media/logos/favicon.ico"/>
-
-    <!-- Google Tag Manager (optional) -->
-    <script>
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-5FS8GGP');
-    </script>
-
-    <!-- Frame busting (security) -->
-    <script>
-        if (window.top !== window.self) {
-            window.top.location.replace(window.self.location.href);
-        }
-    </script>
 </head>
 <body  id="kt_app_body" data-kt-app-header-fixed="true" data-kt-app-header-fixed-mobile="true" data-kt-app-sidebar-enabled="true" data-kt-app-sidebar-fixed="true" data-kt-app-sidebar-hoverable="true" data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" data-kt-app-aside-enabled="true" data-kt-app-aside-fixed="true" data-kt-app-aside-push-toolbar="true" data-kt-app-aside-push-footer="true"  class="app-default" >
-<!--begin::Theme mode setup on page load-->
 <?php $this->beginBody() ?>
-<!--begin::App-->
+<script>
+    if (window.top !== window.self) {
+        window.top.location.replace(window.self.location.href);
+    }
+</script>
+<script>
+    var defaultThemeMode = "light";
+    var themeMode;
+
+    if ( document.documentElement ) {
+        if ( document.documentElement.hasAttribute("data-bs-theme-mode")) {
+            themeMode = document.documentElement.getAttribute("data-bs-theme-mode");
+        } else {
+            if ( localStorage.getItem("data-bs-theme") !== null ) {
+                themeMode = localStorage.getItem("data-bs-theme");
+            } else {
+                themeMode = defaultThemeMode;
+            }
+        }
+
+        if (themeMode === "system") {
+            themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+
+        document.documentElement.setAttribute("data-bs-theme", themeMode);
+    }
+</script>
 <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
     <!--begin::Page-->
     <div class="app-page  flex-column flex-column-fluid " id="kt_app_page">
-
 
         <!--begin::Header-->
         <div id="kt_app_header" class="app-header  d-flex flex-column flex-stack "
 
         >
 
-            <!--begin::Header main-->
             <div class="d-flex flex-stack flex-grow-1">
 
                 <div class="app-header-logo d-flex align-items-center ps-lg-12" id="kt_app_header_logo">
@@ -590,7 +595,7 @@ $this->beginPage();
 
 
                 <!--begin::Content-->
-                <div id="kt_app_content" class="app-content flex-column-fluid">
+                <div id="kt_app_content" class="app-content pt-0 flex-column-fluid">
                     <div class="container-xxl">
                         <?php
                         use kartik\growl\Growl;
@@ -690,6 +695,7 @@ $this->beginPage();
 //        $this->registerJsFile('https://cdn.amcharts.com/lib/5/index.js', ['position' => \yii\web\View::POS_END]);
 //    }
 //    ?>
+    <script src="/metronic/assets/plugins/global/plugins.bundle.js"></script>
 
     <?php $this->endBody(); ?>
 </body>

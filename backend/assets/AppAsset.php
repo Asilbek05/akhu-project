@@ -16,7 +16,7 @@ class AppAsset extends AssetBundle
     ];
 
     public $js = [
-        'plugins/global/plugins.bundle.js',
+
         'js/scripts.bundle.js',
     ];
 

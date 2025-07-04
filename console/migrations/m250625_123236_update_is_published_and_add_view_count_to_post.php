@@ -18,7 +18,6 @@ class m250625_123236_update_is_published_and_add_view_count_to_post extends Migr
             $this->addColumn('{{%posts}}', 'view_count', $this->integer()->defaultValue(0)->after('is_published'));
         }
     }
-
     /**
      * {@inheritdoc}
      */

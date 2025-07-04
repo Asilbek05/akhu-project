@@ -10,13 +10,12 @@ use Yii;
  * @property int $id
  * @property string $name
  * @property string $phone
- * @property string|null $message
+ * @property string|null $message 
  * @property int|null $status
  * @property string|null $created_at
  */
 class ApplicationRequests extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}

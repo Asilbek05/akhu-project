@@ -50,7 +50,7 @@ class Posts extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['content', 'image'], 'default', 'value' => null],
+            [['content'], 'default', 'value' => null],
             [['is_published'], 'boolean'],
             [['is_published'], 'default', 'value' => 0],
             [['user_id', 'title', 'slug'], 'required'],
@@ -74,7 +74,6 @@ class Posts extends \yii\db\ActiveRecord
             'title' => 'Title',
             'slug' => 'Slug',
             'content' => 'Content',
-            'image' => 'Image',
             'is_published' => 'Is Published',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

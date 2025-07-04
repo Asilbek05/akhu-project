@@ -5,8 +5,6 @@
 use backend\assets\AppAsset;
 AppAsset::register($this);
 
-use \backend\assets\DatatablesAsset;
-DatatablesAsset::register($this);
 
 use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
@@ -16,49 +14,52 @@ $this->beginPage();
     <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
-    <?= Html::csrfMetaTags() ?>
     <meta charset="<?= Yii::$app->charset ?>">
     <?= Html::csrfMetaTags() ?>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-
-    <!-- Favicon -->
     <link rel="shortcut icon" href="<?= Yii::getAlias('@web') ?>/metronic/assets/media/logos/favicon.ico"/>
-
-
-    <!-- Google Tag Manager (optional) -->
-    <script>
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-5FS8GGP');
-    </script>
-
-    <!-- Frame busting (security) -->
-    <script>
-        if (window.top !== window.self) {
-            window.top.location.replace(window.self.location.href);
-        }
-    </script>
 </head>
 <body  id="kt_app_body" data-kt-app-header-fixed="true" data-kt-app-header-fixed-mobile="true" data-kt-app-sidebar-enabled="true" data-kt-app-sidebar-fixed="true" data-kt-app-sidebar-hoverable="true" data-kt-app-sidebar-push-toolbar="true" data-kt-app-sidebar-push-footer="true" data-kt-app-aside-enabled="true" data-kt-app-aside-fixed="true" data-kt-app-aside-push-toolbar="true" data-kt-app-aside-push-footer="true"  class="app-default" >
-<!--begin::Theme mode setup on page load-->
 <?php $this->beginBody() ?>
-<!--begin::App-->
+<script>
+    if (window.top !== window.self) {
+        window.top.location.replace(window.self.location.href);
+    }
+</script>
+<script>
+    var defaultThemeMode = "light";
+    var themeMode;
+
+    if ( document.documentElement ) {
+        if ( document.documentElement.hasAttribute("data-bs-theme-mode")) {
+            themeMode = document.documentElement.getAttribute("data-bs-theme-mode");
+        } else {
+            if ( localStorage.getItem("data-bs-theme") !== null ) {
+                themeMode = localStorage.getItem("data-bs-theme");
+            } else {
+                themeMode = defaultThemeMode;
+            }
+        }
+
+        if (themeMode === "system") {
+            themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+
+        document.documentElement.setAttribute("data-bs-theme", themeMode);
+    }
+</script>
 <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
     <!--begin::Page-->
     <div class="app-page  flex-column flex-column-fluid " id="kt_app_page">
-
 
         <!--begin::Header-->
         <div id="kt_app_header" class="app-header  d-flex flex-column flex-stack "
 
         >
 
-            <!--begin::Header main-->
             <div class="d-flex flex-stack flex-grow-1">
 
                 <div class="app-header-logo d-flex align-items-center ps-lg-12" id="kt_app_header_logo">
@@ -409,12 +410,10 @@ $this->beginPage();
     <!--begin::Wrapper-->
     <div class="app-wrapper  flex-column flex-row-fluid " id="kt_app_wrapper">
 
-
         <!--begin::Sidebar-->
         <div id="kt_app_sidebar" class="app-sidebar  flex-column "
              data-kt-drawer="true" data-kt-drawer-name="app-sidebar" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="250px" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_sidebar_mobile_toggle"
         >
-
             <!--begin::Wrapper-->
             <div
                     id="kt_app_sidebar_wrapper"
@@ -596,30 +595,32 @@ $this->beginPage();
 
 
                 <!--begin::Content-->
-                <div id="kt_app_content" class="app-content flex-column-fluid">
+                <div id="kt_app_content" class="app-content pt-0 flex-column-fluid">
                     <div class="container-xxl">
                         <?php
                         use kartik\growl\Growl;
-
-                        foreach (Yii::$app->session->getAllFlashes() as $type => $message) {
-                            echo Growl::widget([
-                                'type' => $type,
-                                'title' => strtoupper($type),
-                                'icon' => 'bi bi-info-circle',
-                                'body' => $message,
-                                'showSeparator' => true,
-                                'delay' => 0,
-                                'pluginOptions' => [
-                                    'allow_dismiss' => false,
-                                    'showProgressbar' => true,
-                                    'delay' => 4000,
-                                    'placement' => [
-                                        'from' => 'bottom',
-                                        'align' => 'right',
+                        if (!empty(Yii::$app->session->getAllFlashes())){
+                            foreach (Yii::$app->session->getAllFlashes() as $type => $message) {
+                                echo Growl::widget([
+                                    'type' => $type,
+                                    'title' => strtoupper($type),
+                                    'icon' => 'bi bi-info-circle',
+                                    'body' => $message,
+                                    'showSeparator' => true,
+                                    'delay' => 0,
+                                    'pluginOptions' => [
+                                        'allow_dismiss' => false,
+                                        'showProgressbar' => true,
+                                        'delay' => 4000,
+                                        'placement' => [
+                                            'from' => 'bottom',
+                                            'align' => 'right',
+                                        ]
                                     ]
-                                ]
-                            ]);
+                                ]);
+                            }
                         }
+
                         ?>
                         <?= $content ?>
                     </div>
@@ -665,10 +666,36 @@ $this->beginPage();
     </div>
     <!--end::Wrapper-->
 
-
 </div>
-
-
+<!--    --><?php
+//    $this->registerJsFile('@web/metronic/assets/plugins/global/plugins.bundle.js', [
+//        'depends' => [\yii\web\JqueryAsset::class],
+//        'position' => \yii\web\View::POS_END,
+//    ]);
+//
+//    $this->registerJsFile('@web/metronic/assets/js/scripts.bundle.js', [
+//        'depends' => [\yii\web\JqueryAsset::class],
+//        'position' => \yii\web\View::POS_END,
+//    ]);
+//
+//    // Yii gridview ishlashi uchun
+//    $this->registerJsFile('@web/assets/' . Yii::$app->assetManager->getBundle('yii\\grid\\GridViewAsset')->sourcePath . '/yii.gridView.js', [
+//        'depends' => [\yii\web\JqueryAsset::class],
+//        'position' => \yii\web\View::POS_END,
+//    ]);
+//    $controller = Yii::$app->controller->id;
+//    if ($controller === 'events') {
+//        $this->registerJsFile('@web/metronic/assets/plugins/custom/fullcalendar/fullcalendar.bundle.js', [
+//            'depends' => [\yii\web\JqueryAsset::class],
+//            'position' => \yii\web\View::POS_END,
+//        ]);
+//    }
+//    if ($controller === 'dashboard') {
+//        $this->registerJsFile('@web/metronic/assets/js/widgets.bundle.js', ['position' => \yii\web\View::POS_END]);
+//        $this->registerJsFile('https://cdn.amcharts.com/lib/5/index.js', ['position' => \yii\web\View::POS_END]);
+//    }
+//    ?>
+    <script src="/metronic/assets/plugins/global/plugins.bundle.js"></script>
 
     <?php $this->endBody(); ?>
 </body>

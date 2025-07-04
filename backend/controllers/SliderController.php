@@ -86,17 +86,24 @@ class SliderController extends Controller
                 $fileName = uniqid() . '.' . $file->extension;
                 if ($file->saveAs($dir . $fileName)) {
                     $model->background_image = '/uploads/sliders/' . $fileName;
+                } else {
+                    Yii::$app->session->setFlash('error', 'Rasm yuklanmadi. Iltimos, qayta urinib ko‘ring.');
                 }
             }
 
             if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Slayder muvaffaqiyatli yaratildi.');
                 return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('error', 'Xatolik yuz berdi. Maʼlumotlar saqlanmadi.');
             }
         }
+
         return $this->render('create', [
             'model' => $model,
         ]);
     }
+
 
 
 
@@ -112,7 +119,7 @@ class SliderController extends Controller
     {
         $model = Slider::findOne($id);
         if (!$model) {
-            throw new NotFoundHttpException('Slider not found.');
+            throw new NotFoundHttpException('Slider topilmadi.');
         }
 
         $oldImage = $model->background_image;
@@ -121,6 +128,7 @@ class SliderController extends Controller
             $file = UploadedFile::getInstance($model, 'background_image_file');
 
             if ($file) {
+                // delete old image
                 if (!empty($oldImage)) {
                     $oldFilePath = Yii::getAlias('@frontend/web') . $oldImage;
                     if (file_exists($oldFilePath)) {
@@ -128,20 +136,27 @@ class SliderController extends Controller
                     }
                 }
 
+                // save new image
                 $dir = Yii::getAlias('@frontend/web/uploads/sliders/');
                 if (!is_dir($dir)) {
                     mkdir($dir, 0777, true);
                 }
 
                 $fileName = uniqid() . '.' . $file->extension;
-                $file->saveAs($dir . $fileName);
-                $model->background_image = '/uploads/sliders/' . $fileName;
+                if ($file->saveAs($dir . $fileName)) {
+                    $model->background_image = '/uploads/sliders/' . $fileName;
+                } else {
+                    Yii::$app->session->setFlash('error', 'Rasmni yuklashda xatolik yuz berdi.');
+                }
             } else {
-                $model->background_image = $oldImage;
+                $model->background_image = $oldImage; // keep old image
             }
 
             if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Slayder muvaffaqiyatli yangilandi.');
                 return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+                Yii::$app->session->setFlash('error', 'Xatolik yuz berdi. Maʼlumotlar yangilanmadi.');
             }
         }
 
@@ -149,6 +164,7 @@ class SliderController extends Controller
             'model' => $model,
         ]);
     }
+
 
 
 
@@ -209,6 +225,4 @@ class SliderController extends Controller
 
         return $this->redirect(['index']);
     }
-
-
 }

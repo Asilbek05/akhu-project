@@ -21,6 +21,7 @@ return [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-backend', 'httpOnly' => true],
+            'loginUrl' => ['site/login'],
         ],
         'session' => [
             // this is the name of the session cookie used for login on the backend
@@ -58,6 +59,7 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
+            'enableStrictParsing' => false,
             'rules' => [
                 'signup' => 'site/signup',
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',
@@ -66,6 +68,7 @@ return [
                 'settings/update-section/<id:\d+>/<section:\w+>' => 'settings/update-section',
                 'event/<event_id:\d+>/schedules' => 'event-schedule/manage',
                 'leadership-sections/manage/<leadership_id:\d+>' => 'leadership-sections/manage',
+                'application-requests/set-status' => 'application-requests/set-status',
             ],
         ],
 

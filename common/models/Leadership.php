@@ -53,15 +53,14 @@ class Leadership extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['email', 'phone', 'photo'], 'default', 'value' => null],
             [['sort_order'], 'default', 'value' => 0],
-            [['name', 'position'], 'required'],
+            [['name', 'position','email', 'phone', 'photo'], 'required'],
+            ['email', 'email'],
             [['sort_order'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'position', 'email', 'phone', 'photo'], 'string', 'max' => 255],
             [['photoFile'], 'required', 'on' => 'create'],
-            [['photoFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif', ],
-
+            [['photoFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif'],
         ];
     }
 

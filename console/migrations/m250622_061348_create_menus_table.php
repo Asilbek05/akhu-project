@@ -23,7 +23,6 @@ class m250622_061348_create_menus_table extends Migration
             'created_at' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
         ]);
 
-        // O'z-o'ziga bog'liq (self-referencing) foreign key qo‘shish (optional)
         $this->addForeignKey(
             'fk_menus_parent',
             '{{%menus}}',

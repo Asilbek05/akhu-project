@@ -661,7 +661,6 @@ $this->beginPage();
     </div>
     <!--end::Wrapper-->
 
-
 </div>
 <!--    --><?php
 //    $this->registerJsFile('@web/metronic/assets/plugins/global/plugins.bundle.js', [

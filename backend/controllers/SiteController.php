@@ -23,21 +23,30 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['login', 'logout', 'signup', 'request-password-reset', 'index', 'error'],
+                'only' => ['login', 'logout', 'request-password-reset', 'index', 'error'],
                 'rules' => [
                     [
                         'actions' => ['login', 'error'],
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['signup', 'request-password-reset'],
+                        'actions' => ['request-password-reset'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout', 'index'],
+                        'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function () {
+                            $user = Yii::$app->user->identity;
+                            return $user && in_array($user->role, ['admin', 'superadmin']);
+                        },
                     ],
                 ],
             ],
@@ -49,6 +58,7 @@ class SiteController extends Controller
             ],
         ];
     }
+
 
     /**
      * {@inheritdoc}
@@ -93,23 +103,6 @@ class SiteController extends Controller
         $model->password = '';
 
         return $this->render('login', [
-            'model' => $model,
-        ]);
-    }
-    public function actionSignup()
-    {
-        $this->layout = 'auth';
-
-        $model = new \common\models\SignupForm();
-
-        if ($model->load(Yii::$app->request->post()) && $user = $model->signup()) {
-
-            if (Yii::$app->user->login($user)) {
-                return $this->goHome();
-            }
-        }
-
-        return $this->render('signup', [
             'model' => $model,
         ]);
     }

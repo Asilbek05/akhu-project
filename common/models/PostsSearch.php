@@ -18,7 +18,7 @@ class PostsSearch extends Posts
     {
         return [
             [['id', 'user_id', 'is_published'], 'integer'],
-            [['title', 'slug', 'content', 'image', 'created_at', 'updated_at'], 'safe'],
+            [['title', 'slug', 'content', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -68,8 +68,7 @@ class PostsSearch extends Posts
 
         $query->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'slug', $this->slug])
-            ->andFilterWhere(['like', 'content', $this->content])
-            ->andFilterWhere(['like', 'image', $this->image]);
+            ->andFilterWhere(['like', 'content', $this->content]);
 
         return $dataProvider;
     }

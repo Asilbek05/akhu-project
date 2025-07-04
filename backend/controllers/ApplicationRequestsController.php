@@ -2,133 +2,78 @@
 
 namespace backend\controllers;
 
+use Yii;
 use common\models\ApplicationRequests;
 use common\models\ApplicationRequestsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-/**
- * ApplicationRequestsController implements the CRUD actions for ApplicationRequests model.
- */
 class ApplicationRequestsController extends Controller
 {
-    /**
-     * @inheritDoc
-     */
     public function behaviors()
     {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
+        return [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'set-status' => ['POST'],
                 ],
-            ]
-        );
+            ],
+        ];
     }
 
-    /**
-     * Lists all ApplicationRequests models.
-     *
-     * @return string
-     */
     public function actionIndex()
     {
         $searchModel = new ApplicationRequestsSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $statusFilter = $searchModel->status;
+        $nameFilter = $searchModel->name;
+        $phoneFilter = $searchModel->phone;
+
+        $baseQuery = \common\models\ApplicationRequests::find();
+        if ($nameFilter) {
+            $baseQuery->andWhere(['like', 'name', $nameFilter]);
+        }
+        if ($phoneFilter) {
+            $baseQuery->andWhere(['like', 'phone', $phoneFilter]);
+        }
+
+        $Count = (clone $baseQuery)->count();
+        $viewCount = (clone $baseQuery)->andWhere(['status' => 1])->count();
+        $noviewCount = (clone $baseQuery)->andWhere(['status' => 0])->count();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'Count' => $Count,
+            'viewCount' => $viewCount,
+            'noviewCount' => $noviewCount,
         ]);
     }
-
-    /**
-     * Displays a single ApplicationRequests model.
-     * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
+    public function actionSetStatus()
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-    /**
-     * Creates a new ApplicationRequests model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-    public function actionCreate()
-    {
-        $model = new ApplicationRequests();
+        $id = Yii::$app->request->post('id');
+        $status = Yii::$app->request->post('status');
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        if (!$id || $status === null) {
+            return ['success' => false, 'message' => 'ID yoki status yuborilmadi'];
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Updates an existing ApplicationRequests model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $model = ApplicationRequests::findOne($id);
+        if (!$model) {
+            return ['success' => false, 'message' => 'Xabar topilmadi'];
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Deletes an existing ApplicationRequests model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the ApplicationRequests model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return ApplicationRequests the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = ApplicationRequests::findOne(['id' => $id])) !== null) {
-            return $model;
+        $model->status = (int)$status;
+        if ($model->save(false)) {
+            return ['success' => true];
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        return ['success' => false, 'message' => 'Saqlashda xato'];
     }
+
 }

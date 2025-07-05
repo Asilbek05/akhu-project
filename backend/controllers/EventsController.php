@@ -2,17 +2,17 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
 use common\models\Events;
 use common\models\EventsSearch;
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * EventsController implements the CRUD actions for Events model.
  */
-class EventsController extends Controller
+class EventsController extends AdminController
 {
     /**
      * @inheritDoc

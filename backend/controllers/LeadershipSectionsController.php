@@ -2,18 +2,18 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
 use common\models\Leadership;
 use common\models\LeadershipSections;
 use common\models\LeadershipSectionsSearch;
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * LeadershipSectionsController implements the CRUD actions for LeadershipSections model.
  */
-class LeadershipSectionsController extends Controller
+class LeadershipSectionsController extends AdminController
 {
     /**
      * @inheritDoc

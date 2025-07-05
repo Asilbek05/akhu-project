@@ -15,14 +15,19 @@ class UserController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['index', 'create', 'update', 'delete'],
+                'denyCallback' => function ($rule, $action) {
+                    Yii::$app->user->logout();
+                    return Yii::$app->response->redirect(['site/login']);
+                },
                 'rules' => [
                     [
                         'allow' => true,
                         'roles' => ['@'],
-                        'matchCallback' => function () {
-                            $user = Yii::$app->user->identity;
-                            return $user && in_array($user->role, ['admin', 'superadmin']);
+                        'matchCallback' => function ($rule, $action) {
+                            if (in_array($action->id, ['delete', 'create'])) {
+                                return Yii::$app->user->identity->role === 'superadmin';
+                            }
+                            return in_array(Yii::$app->user->identity->role, ['admin', 'superadmin']);
                         },
                     ],
                 ],

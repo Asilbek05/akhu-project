@@ -463,80 +463,34 @@ $this->beginPage();
                         ?>
 
                         <!--begin:Menu item-->
-                        <div data-kt-menu-trigger="click" class="menu-item menu-accordion <?= $isEventMenuActive ? 'here show' : '' ?>">
-                            <!--begin:Menu link-->
-                            <span class="menu-link">
+                        <div class="menu-item">
+                            <a href="<?= \yii\helpers\Url::to(['/events/index']) ?>"
+                               class="menu-link <?= $isEventMenuActive ? 'active' : '' ?>">
         <span class="menu-icon">
             <i class="ki-outline ki-calendar fs-2"></i>
         </span>
-        <span class="menu-title">Events</span>
-        <span class="menu-arrow"></span>
-    </span>
-                            <!--end:Menu link-->
-
-                            <!--begin:Menu sub-->
-                            <div class="menu-sub menu-sub-accordion">
-                                <!-- Event -->
-                                <div class="menu-item">
-                                    <a href="<?= \yii\helpers\Url::to(['/events/index']) ?>"
-                                       class="menu-link <?= $controller === 'events' ? 'active' : '' ?>">
-                                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                        <span class="menu-title">Event</span>
-                                    </a>
-                                </div>
-
-                                <!-- Event Schedules -->
-                                <div class="menu-item">
-                                    <a href="<?= \yii\helpers\Url::to(['/event-schedule/index']) ?>"
-                                       class="menu-link <?= $controller === 'event-schedule' ? 'active' : '' ?>">
-                                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                        <span class="menu-title">Event Schedules</span>
-                                    </a>
-                                </div>
-                            </div>
-                            <!--end:Menu sub-->
+                                <span class="menu-title">Events</span>
+                            </a>
                         </div>
                         <!--end:Menu item-->
 
                         <?php
                         $controller = Yii::$app->controller->id;
+                        // Har ikkala controllerda ham "Leadership" menyusi aktiv bo'lishi kerak
                         $isLeadershipMenuActive = in_array($controller, ['leadership', 'leadership-sections']);
                         ?>
 
                         <!--begin:Menu item-->
-                        <div data-kt-menu-trigger="click" class="menu-item menu-accordion <?= $isLeadershipMenuActive ? 'here show' : '' ?>">
-                            <!--begin:Menu link-->
-                            <span class="menu-link">
+                        <div class="menu-item">
+                            <a href="<?= \yii\helpers\Url::to(['/leadership/index']) ?>"
+                               class="menu-link <?= $isLeadershipMenuActive ? 'active' : '' ?>">
         <span class="menu-icon">
-            <i class="ki-outline ki-user-square fs-2"></i> <!-- People Icon -->
+            <i class="ki-outline ki-user-square fs-2"></i>
         </span>
-        <span class="menu-title">Leadership</span>
-        <span class="menu-arrow"></span>
-    </span>
-                            <!--end:Menu link-->
-
-                            <!--begin:Menu sub-->
-                            <div class="menu-sub menu-sub-accordion">
-                                <!-- Leadership -->
-                                <div class="menu-item">
-                                    <a href="<?= \yii\helpers\Url::to(['/leadership/index']) ?>"
-                                       class="menu-link <?= $controller === 'leadership' ? 'active' : '' ?>">
-                                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                        <span class="menu-title">Leadership</span>
-                                    </a>
-                                </div>
-
-                                <!-- Leadership Sections -->
-                                <div class="menu-item">
-                                    <a href="<?= \yii\helpers\Url::to(['/leadership-sections/index']) ?>"
-                                       class="menu-link <?= $controller === 'leadership-sections' ? 'active' : '' ?>">
-                                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                        <span class="menu-title">Leadership Sections</span>
-                                    </a>
-                                </div>
-                            </div>
-                            <!--end:Menu sub-->
+                                <span class="menu-title">Leadership</span>
+                            </a>
                         </div>
+                        <!--end:Menu item-->
                         <!--end:Menu item-->
                         <?php
                         $isSettingsActive = Yii::$app->controller->id === 'settings';

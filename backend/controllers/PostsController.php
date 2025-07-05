@@ -2,12 +2,12 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
 use common\models\PostImages;
 use common\models\Posts;
 use common\models\PostsSearch;
 
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
@@ -15,26 +15,8 @@ use yii\web\UploadedFile;
 /**
  * PostsController implements the CRUD actions for Posts model.
  */
-class PostsController extends Controller
+class PostsController extends AdminController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
-
     /**
      * Lists all Posts models.
      *
@@ -72,39 +54,22 @@ class PostsController extends Controller
 
     public function actionCreate()
     {
-        $model = new Posts();
+        $model = new Posts(['scenario' => 'create']);
 
         if ($model->load(Yii::$app->request->post())) {
             $model->user_id = Yii::$app->user->isGuest ? 1 : Yii::$app->user->id;
             $model->slug = \yii\helpers\Inflector::slug($model->title);
 
-            if ($model->save()) {
-                $images = UploadedFile::getInstances($model, 'images');
-                $uploadDir = Yii::getAlias('@frontend/web/uploads/posts/');
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0775, true);
-                }
-
-                foreach ($images as $img) {
-                    $fileName = time() . '_' . Yii::$app->security->generateRandomString(8) . '.' . $img->extension;
-                    $uploadPath = $uploadDir . $fileName;
-
-                    if ($img->saveAs($uploadPath)) {
-                        $imageModel = new PostImages();
-                        $imageModel->post_id = $model->id;
-                        $imageModel->image = $fileName;
-                        $imageModel->save();
-                    }
-                }
-
+            if ($model->validate() && $model->save()) {
+                $this->saveImages($model);
+                Yii::$app->session->setFlash('success', 'Post yaratildi!');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->render('create', ['model' => $model]);
     }
+
 
 
 
@@ -119,8 +84,10 @@ class PostsController extends Controller
     {
         $model = Posts::findOne($id);
         if (!$model) {
-            throw new NotFoundHttpException('Post not found.');
+            throw new NotFoundHttpException('Post topilmadi.');
         }
+
+        $model->scenario = 'update';
 
         if ($model->load(Yii::$app->request->post())) {
             $model->user_id = Yii::$app->user->isGuest ? 1 : Yii::$app->user->id;
@@ -129,46 +96,35 @@ class PostsController extends Controller
                 $model->slug = \yii\helpers\Inflector::slug($model->title);
             }
 
-            if ($model->save()) {
-                $images = UploadedFile::getInstances($model, 'images');
-
-                if (!empty($images)) {
-                    $oldImages = PostImages::find()->where(['post_id' => $model->id])->all();
-                    foreach ($oldImages as $oldImage) {
-                        $filePath = Yii::getAlias('@frontend/web/uploads/posts/') . $oldImage->image;
-                        if (file_exists($filePath)) {
-                            @unlink($filePath);
-                        }
-                    }
-
-                    PostImages::deleteAll(['post_id' => $model->id]);
-
-                    $uploadDir = Yii::getAlias('@frontend/web/uploads/posts/');
-                    if (!is_dir($uploadDir)) {
-                        mkdir($uploadDir, 0775, true);
-                    }
-
-                    foreach ($images as $img) {
-                        $fileName = time() . '_' . Yii::$app->security->generateRandomString(8) . '.' . $img->extension;
-                        $uploadPath = $uploadDir . $fileName;
-
-                        if ($img->saveAs($uploadPath)) {
-                            $imageModel = new PostImages();
-                            $imageModel->post_id = $model->id;
-                            $imageModel->image = $fileName;
-                            $imageModel->save();
-                        }
-                    }
-                }
-
+            if ($model->validate() && $model->save()) {
+                $this->saveImages($model);
+                Yii::$app->session->setFlash('success', 'Post yangilandi!');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        return $this->render('update', ['model' => $model]);
     }
+
+    protected function saveImages($model)
+    {
+        $images = UploadedFile::getInstances($model, 'images');
+        $uploadDir = Yii::getAlias('@frontend/web/uploads/posts/');
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
+
+        foreach ($images as $img) {
+            $fileName = uniqid('post_') . '.' . $img->extension;
+            if ($img->saveAs($uploadDir . $fileName)) {
+                $imageModel = new PostImages();
+                $imageModel->post_id = $model->id;
+                $imageModel->image = $fileName;
+                $imageModel->save();
+            }
+        }
+    }
+
 
 
     /**
@@ -218,5 +174,22 @@ class PostsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    public function actionDeleteImage($id)
+    {
+        $image = PostImages::findOne($id);
+        if (!$image) {
+            throw new NotFoundHttpException('Rasm topilmadi.');
+        }
+
+        $filePath = Yii::getAlias('@frontend/web/uploads/posts/') . $image->image;
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        $image->delete();
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['success' => true];
     }
 }

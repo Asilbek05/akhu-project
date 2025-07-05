@@ -2,18 +2,18 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
 use common\models\Events;
 use common\models\EventSchedule;
 use common\models\EventScheduleSearch;
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * EventScheduleController implements the CRUD actions for EventSchedule model.
  */
-class EventScheduleController extends Controller
+class EventScheduleController extends AdminController
 {
     /**
      * @inheritDoc

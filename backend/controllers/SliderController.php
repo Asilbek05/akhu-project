@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
 use common\models\Slider;
 use common\models\SliderSearch;
 use Yii;
@@ -14,25 +15,8 @@ use yii\web\UploadedFile;
 /**
  * SliderController implements the CRUD actions for Slider model.
  */
-class SliderController extends Controller
+class SliderController extends AdminController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
 
     /**
      * Lists all Slider models.

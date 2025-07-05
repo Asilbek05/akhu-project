@@ -2,14 +2,14 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
 use Yii;
 use common\models\ApplicationRequests;
 use common\models\ApplicationRequestsSearch;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-class ApplicationRequestsController extends Controller
+class ApplicationRequestsController extends AdminController
 {
     public function behaviors()
     {

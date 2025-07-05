@@ -19,13 +19,19 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
 
     <div class="mb-3">
-        <?= $form->field($model, 'images[]', [
-            'template' => '{label}<div class="input-group">{input}</div>{hint}{error}',
-        ])->fileInput([
-            'multiple' => true,
-            'accept' => 'image/*',
-            'class' => 'form-control',
-        ])->label('Rasmlar tanlang') ?>
+        <?= $form->field($model, 'images[]')->widget(kartik\file\FileInput::class, [
+            'options' => ['multiple' => true, 'accept' => 'image/*'],
+            'pluginOptions' => [
+                'initialPreview' => $model->isNewRecord ? [] : $model->getImagesUrls(),
+                'initialPreviewAsData' => true,
+                'initialPreviewConfig' => $model->isNewRecord ? [] : $model->getImagesPreviewConfig(),
+                'overwriteInitial' => false,
+                'showUpload' => false,
+                'showRemove' => true,
+                'maxFileCount' => 10,
+            ],
+        ]) ?>
+
     </div>
 
 

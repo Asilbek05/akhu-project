@@ -2,10 +2,10 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
 use common\models\Leadership;
 use common\models\LeadershipSearch;
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
@@ -13,7 +13,7 @@ use yii\web\UploadedFile;
 /**
  * LeadershipController implements the CRUD actions for Leadership model.
  */
-class LeadershipController extends Controller
+class LeadershipController extends AdminController
 {
     /**
      * @inheritDoc
@@ -74,12 +74,8 @@ class LeadershipController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             $model->photoFile = UploadedFile::getInstance($model, 'photoFile');
-
             if ($model->validate()) {
-                if ($model->photoFile) {
-                    $model->uploadPhoto();
-                }
-
+                $model->uploadPhoto();
                 if ($model->save(false)) {
                     Yii::$app->session->setFlash('success', 'Leadership created successfully.');
                     return $this->redirect(['index']);
@@ -90,34 +86,26 @@ class LeadershipController extends Controller
         return $this->render('create', ['model' => $model]);
     }
 
-
-
-    /**
-     * Updates an existing Leadership model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionUpdate($id)
     {
         $model = Leadership::findOne($id);
+        if (!$model) {
+            throw new NotFoundHttpException('Leadership topilmadi.');
+        }
 
         $model->scenario = 'update';
-        $oldPhoto = $model->photo;
+
         if ($model->load(Yii::$app->request->post())) {
             $model->photoFile = UploadedFile::getInstance($model, 'photoFile');
-
-            if ($model->photoFile) {
+            if ($model->validate()) {
                 $model->uploadPhoto();
-            } else {
-                $model->photo = $oldPhoto;
-            }
-            if ($model->save()) {
-                Yii::$app->session->setFlash('success', 'Leadership updated successfully.');
-                return $this->redirect(['index']);
+                if ($model->save(false)) {
+                    Yii::$app->session->setFlash('success', 'Leadership updated successfully.');
+                    return $this->redirect(['index']);
+                }
             }
         }
+
         return $this->render('update', ['model' => $model]);
     }
     /**

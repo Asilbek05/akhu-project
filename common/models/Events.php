@@ -54,10 +54,10 @@ class Events extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['location', 'end_date', 'time', 'description'], 'default', 'value' => null],
+            [['location', 'time', 'description'], 'default', 'value' => null],
             [['views'], 'default', 'value' => 0],
             [['title', 'start_date'], 'required'],
-            [['start_date', 'end_date', 'time', 'created_at', 'updated_at'], 'safe'],
+            [['start_date', 'time', 'created_at', 'updated_at'], 'safe'],
             [['description'], 'string'],
             [['views'], 'integer'],
             [['title', 'location'], 'string', 'max' => 255],
@@ -74,7 +74,6 @@ class Events extends \yii\db\ActiveRecord
             'title' => 'Title',
             'location' => 'Location',
             'start_date' => 'Start Date',
-            'end_date' => 'End Date',
             'time' => 'Time',
             'description' => 'Description',
             'views' => 'Views',

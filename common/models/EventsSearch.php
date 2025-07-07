@@ -11,14 +11,20 @@ use common\models\Events;
  */
 class EventsSearch extends Events
 {
+    public $filter_start_date;
+    public $filter_end_date;
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'views'], 'integer'],
-            [['title', 'location', 'start_date', 'end_date', 'time', 'description', 'poster', 'created_at', 'updated_at'], 'safe'],
+            [['title', 'location', 'filter_start_date', 'filter_end_date'], 'safe'],
+            [['filter_start_date', 'filter_end_date'], 'date', 'format' => 'php:Y-m-d'],
+            ['filter_end_date', 'compare', 'compareAttribute' => 'filter_start_date', 'operator' => '>=', 'type' => 'date', 'when' => function($model) {
+                return $model->filter_start_date && $model->filter_end_date;
+            }, 'message' => 'Tugash vaqti boshlanish vaqtidan oldin bo‘lmasligi kerak.'],
         ];
     }
 
@@ -47,21 +53,22 @@ class EventsSearch extends Events
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['start_date' => SORT_DESC]],
         ]);
 
         $this->load($params, $formName);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
+            $query->where('0=1');
             return $dataProvider;
         }
+
 
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
             'time' => $this->time,
             'views' => $this->views,
             'created_at' => $this->created_at,
@@ -72,7 +79,15 @@ class EventsSearch extends Events
             ->andFilterWhere(['like', 'location', $this->location])
             ->andFilterWhere(['like', 'description', $this->description]);
 
-        //www
+
+        if ($this->filter_start_date) {
+            $query->andWhere(['>=', 'start_date', $this->filter_start_date]);
+        }
+        if ($this->filter_end_date) {
+            $query->andWhere(['<=', 'start_date', $this->filter_end_date]);
+        }
+
+
         return $dataProvider;
     }
 }

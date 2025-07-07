@@ -26,6 +26,7 @@ use yii\widgets\ActiveForm;
             <div class="col-md-4">
                 <?= $form->field($model, 'position')->textInput(['placeholder' => 'Position'])->label(false) ?>
             </div>
+
             <div class="col-md-4">
                 <?= $form->field($model, 'email')->textInput(['placeholder' => 'Email'])->label(false) ?>
             </div>

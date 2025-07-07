@@ -90,12 +90,15 @@ class EventScheduleController extends AdminController
     {
         $model = new \common\models\EventSchedule();
         $model->event_id = $event_id;
-
+        $event = Events::findOne($event_id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['manage', 'event_id' => $event_id]);
         }
 
-        return $this->render('create', ['model' => $model]);
+        return $this->renderAjax('_form', [
+            'model' => $model,
+            'event' => $event,
+        ]);
     }
 
 
@@ -110,12 +113,15 @@ class EventScheduleController extends AdminController
     {
         $model = $this->findModel($id);
         $event_id = $model->event_id;
-
+        $event = Events::findOne($model->event_id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['manage', 'event_id' => $event_id]);
         }
 
-        return $this->render('update', ['model' => $model]);
+        return $this->renderAjax('_form', [
+            'model' => $model,
+            'event' => $event,
+        ]);
     }
 
     /**

@@ -13,8 +13,10 @@ class AdminController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'denyCallback' => function ($rule, $action) {
-                    Yii::$app->user->logout();
+                'denyCallback' => function () {
+                    if (!Yii::$app->user->isGuest) {
+                        Yii::$app->user->logout();
+                    }
                     return Yii::$app->response->redirect(['site/login']);
                 },
                 'rules' => [

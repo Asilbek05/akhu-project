@@ -81,10 +81,23 @@ $this->beginPage();
                         <i class="ki-outline ki-abstract-14 fs-2"></i>	</div>
                     <!--end::Sidebar mobile toggle-->
 
-                    <a href="<?= Yii::$app->homeUrl ?>" class="app-sidebar-logo">
-                        <img alt="Logo" src="<?= Yii::getAlias('@web') ?>/metronic/assets/media/logos/demo39.svg" class="h-25px theme-light-show"/>
-                        <img alt="Logo" src="<?= Yii::getAlias('@web') ?>/metronic/assets/media/logos/demo39-dark.svg" class="h-25px theme-dark-show"/>
+                    <a href="<?= Yii::$app->homeUrl ?>" class="app-sidebar-logo d-flex align-items-center ps-15">
+                        <img alt="Logo" src="<?= Yii::getAlias('@web') ?>/metronic/assets/media/logos/akhu-logo-dark.png"
+                             class="theme-light-show logo-img"/>
+                        <img alt="Logo" src="<?= Yii::getAlias('@web') ?>/metronic/assets/media/logos/akhu-logo-dark.png"
+                             class="theme-dark-show logo-img"/>
                     </a>
+                    <style>
+                        .logo-img {
+                            height: 60px !important; /* logoni kattalashtiradi */
+                            margin-left: 5px; /* o‘ngga suradi */
+                        }
+
+                        .app-sidebar-logo {
+                            padding-top: 10px;
+
+                        }
+                    </style>
 
                 </div>
 
@@ -584,28 +597,38 @@ $this->beginPage();
 
 
             <!--begin::Footer-->
-            <div id="kt_app_footer" class="app-footer " >
+            <!--begin::Footer-->
+            <div id="kt_app_footer" class="app-footer bg-light border-top">
                 <!--begin::Footer container-->
-                <div class="app-container  container-fluid d-flex flex-column flex-md-row flex-center flex-md-stack py-3 ">
+                <div class="app-container container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between py-4 px-3">
+
                     <!--begin::Copyright-->
-                    <div class="text-dark order-2 order-md-1">
-                        <span class="text-muted fw-semibold me-1">2025&copy;</span>
-                        <a href="https://keenthemes.com" target="_blank" class="text-gray-800 text-hover-primary">Keenthemes</a>
+                    <div class="text-muted fw-semibold order-2 order-md-1 text-center text-md-start">
+                        <span class="me-1">&copy; <?= date('Y') ?></span>
+                        <a href="https://akhu.uz" target="_blank" class="text-gray-800 text-hover-primary fw-bold">AKHU</a>
+                        <span class="text-muted">- Barcha huquqlar himoyalangan</span>
                     </div>
                     <!--end::Copyright-->
 
                     <!--begin::Menu-->
-                    <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1">
-                        <li class="menu-item"><a href="https://keenthemes.com" target="_blank" class="menu-link px-2">About</a></li>
-
-                        <li class="menu-item"><a href="https://devs.keenthemes.com" target="_blank" class="menu-link px-2">Support</a></li>
-
-                        <li class="menu-item"><a href="https://1.envato.market/EA4JP" target="_blank" class="menu-link px-2">Purchase</a></li>
+                    <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1 d-flex flex-wrap justify-content-center justify-content-md-end gap-3 mb-0">
+                        <li class="menu-item">
+                            <a href="/site" class="menu-link px-2 text-muted text-hover-primary">About</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/site" class="menu-link px-2 text-muted text-hover-primary">Contact</a>
+                        </li>
+                        <li class="menu-item">
+                            <a href="/site" class="menu-link px-2 text-muted text-hover-primary">Help</a>
+                        </li>
                     </ul>
-                    <!--end::Menu-->        </div>
+                    <!--end::Menu-->
+
+                </div>
                 <!--end::Footer container-->
             </div>
-            <!--end::Footer-->                            </div>
+            <!--end::Footer-->
+        </div>
         <!--end:::Main-->
 
 

@@ -11,17 +11,6 @@ use yii\filters\VerbFilter;
 
 class ApplicationRequestsController extends AdminController
 {
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'set-status' => ['POST'],
-                ],
-            ],
-        ];
-    }
 
     public function actionIndex()
     {

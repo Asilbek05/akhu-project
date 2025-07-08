@@ -30,12 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <!-- MAIN CARD -->
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-light-secondary py-3">
-            <h3 class="card-title fw-semibold mb-0 text-dark">
-                <i class="bi bi-gear me-2"></i> Umumiy Sayt Sozlamalari
-            </h3>
-        </div>
+    <!-- MAIN CARD -->
 
         <div class="card-body">
             <div class="row g-4">
@@ -100,5 +95,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
             </div>
         </div>
-    </div>
+
+
 </div>

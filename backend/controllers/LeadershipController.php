@@ -14,26 +14,7 @@ use yii\web\UploadedFile;
  * LeadershipController implements the CRUD actions for Leadership model.
  */
 class LeadershipController extends AdminController
-{
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
-
-    /**
+{    /**
      * Lists all Leadership models.
      *
      * @return string

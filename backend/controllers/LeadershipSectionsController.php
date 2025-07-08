@@ -15,9 +15,6 @@ use yii\filters\VerbFilter;
  */
 class LeadershipSectionsController extends AdminController
 {
-    /**
-     * @inheritDoc
-     */
     public function behaviors()
     {
         return array_merge(

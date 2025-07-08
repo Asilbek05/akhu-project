@@ -49,11 +49,9 @@ $this->params['breadcrumbs'][] = $this->title;
 <!-- END:: Toolbar -->
 
 <!-- BEGIN:: Search -->
-<div class="card card-flush shadow-sm mt-5">
-    <div class="card-body">
-        <?= $this->render('_search', ['model' => $searchModel]) ?>
-    </div>
-</div>
+
+<?= $this->render('_search', ['model' => $searchModel]) ?>
+
 <!-- END:: Search -->
 
 <!-- BEGIN:: Events Grid -->

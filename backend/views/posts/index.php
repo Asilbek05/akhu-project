@@ -145,9 +145,19 @@ Modal::end();
                         $text = $isActive ? 'Faol' : 'Nofaol';
                         $icon = $isActive ? 'bi-toggle-on' : 'bi-toggle-off';
 
-                        return Html::tag('span', "<i class='bi $icon me-1'></i> $text", [
-                            'class' => "badge $badgeClass p-2",
-                        ]);
+                        // Toggle link
+                        $url = \yii\helpers\Url::to(['toggle-status', 'id' => $model->id]);
+
+                        return \yii\helpers\Html::a(
+                            "<i class='bi $icon me-1'></i> $text",
+                            $url,
+                            [
+                                'class' => "badge $badgeClass p-2",
+                                'data-pjax' => '1', // Agar Pjax ishlatilayotgan bo‘lsa
+                                'data-method' => 'post', // Xavfsizlik uchun
+                                'title' => 'Statusni o‘zgartirish',
+                            ]
+                        );
                     },
                     'filter' => Html::dropDownList(
                         'PostsSearch[is_published]',
@@ -164,7 +174,6 @@ Modal::end();
                     ),
                     'contentOptions' => ['class' => 'text-center'],
                 ],
-
                 [
                     'class' => ActionColumn::class,
                     'template' => '{view} {update} {delete}',

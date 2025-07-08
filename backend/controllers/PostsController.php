@@ -86,7 +86,6 @@ class PostsController extends AdminController
         if (!$model) {
             throw new NotFoundHttpException('Post topilmadi.');
         }
-
         $model->scenario = 'update';
 
         if ($model->load(Yii::$app->request->post())) {

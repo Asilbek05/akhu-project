@@ -2,8 +2,10 @@
 
 namespace backend\controllers;
 
+use common\models\Leadership;
 use common\models\LoginForm;
 use common\models\PasswordResetRequestForm;
+use common\models\Posts;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -79,7 +81,76 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        //Posts count
+        $totalPosts = Posts::find()->count();
+        $activePosts = Posts::find()->where(['is_published' => 1])->count();
+        $inactivePosts = Posts::find()->where(['is_published' => 0])->count();
+
+        $activePercent = $totalPosts > 0 ? round(($activePosts / $totalPosts) * 100) : 0;
+        //end
+
+        //EVENTSCount
+        $today = (new \DateTime())->format('Y-m-d');
+        $tenDaysLater = (new \DateTime('+10 days'))->format('Y-m-d');
+
+        $eventStats = [
+            'total' => \common\models\Events::find()->count(),
+            'today' => \common\models\Events::find()->where(['start_date' => $today])->count(),
+            'upcoming10days' => \common\models\Events::find()
+                ->where(['between', 'start_date', $today, $tenDaysLater])
+                ->count(),
+            'past' => \common\models\Events::find()->where(['<', 'start_date', $today])->count(),
+        ];
+        //leadership Count
+        $leadershipCount = Leadership::find()->count();
+        //UsersCount
+        $userRolesStats = [
+            'superadmin' => User::find()->where(['role' => 'superadmin'])->count(),
+            'admin'      => User::find()->where(['role' => 'admin'])->count(),
+            'user'       => User::find()->where(['role' => 'user'])->count(),
+        ];
+        //EventsTable
+        $postStats = [
+            'total'   => $totalPosts,
+            'active'  => $activePosts,
+            'inactive'=> $inactivePosts,
+            'percent' => $activePercent,
+        ];
+        $futureDays = [];
+        $today = new \DateTime();
+
+        for ($i = 0; $i < 10; $i++) {
+            $date = clone $today;
+            $date->modify("+$i days");
+
+            $futureDays[] = [
+                'label' => $date->format('D'),    // Mon, Tue...
+                'day'   => $date->format('d'),    // 01, 02...
+                'date'  => $date->format('Y-m-d'),
+                'id'    => 'kt_timeline_tab_' . ($i + 1),
+                'active'=> $i === 0,
+            ];
+        }
+
+        $eventsAll = \common\models\Events::find()
+            ->where(['between', 'start_date', $today->format('Y-m-d'), (new \DateTime('+9 days'))->format('Y-m-d')])
+            ->orderBy(['start_date' => SORT_ASC, 'time' => SORT_ASC])
+            ->all();
+
+        $eventsPerDate = [];
+        foreach ($eventsAll as $event) {
+            $eventsPerDate[$event->start_date][] = $event;
+        }
+
+        return $this->render('index', [
+            'futureDays' => $futureDays,
+            'eventsPerDate' => $eventsPerDate,
+            'postStats' => $postStats,
+            'leadershipCount' => $leadershipCount,
+            'eventStats' => $eventStats,
+            'userRolesStats' => $userRolesStats,
+
+        ]);
     }
 
     /**
@@ -137,5 +208,6 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+
 
 }

@@ -116,4 +116,5 @@ class EventsController extends AdminController
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }

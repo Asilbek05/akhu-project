@@ -6,7 +6,9 @@ use backend\assets\AppAsset;
 AppAsset::register($this);
 
 
+
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 
 $this->beginPage();
@@ -273,9 +275,15 @@ $this->beginPage();
                          data-kt-menu-trigger="{default: 'click', lg: 'hover'}"
                          data-kt-menu-attach="parent"
                          data-kt-menu-placement="bottom-end">
-                        <img src="https://preview.keenthemes.com/metronic8/demo39/assets/media/avatars/300-2.jpg" alt="user"/>
+                        <img src="https://preview.keenthemes.com/metronic8/demo39/assets/media/avatars/300-11.jpg" alt="user"/>
                     </div>
+                    <?php
+                    $user = Yii::$app->user->identity;
+                    $avatarUrl ='https://preview.keenthemes.com/metronic8/demo39/assets/media/avatars/300-11.jpg';
 
+                    $displayName = $user ? ($user->fullname ?? $user->username) : 'Guest';
+                    $displayEmail = $user ? $user->email : 'no-email@example.com';
+                    ?>
                     <!--begin::User account menu-->
                     <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px" data-kt-menu="true">
                         <!--begin::Menu item-->
@@ -283,18 +291,19 @@ $this->beginPage();
                             <div class="menu-content d-flex align-items-center px-3">
                                 <!--begin::Avatar-->
                                 <div class="symbol symbol-50px me-5">
-                                    <img alt="Logo" src="https://preview.keenthemes.com/metronic8/demo39/assets/media/avatars/300-2.jpg"/>
+                                    <img alt="User Avatar" src="<?= Html::encode($avatarUrl) ?>"/>
                                 </div>
                                 <!--end::Avatar-->
 
                                 <!--begin::Username-->
                                 <div class="d-flex flex-column">
                                     <div class="fw-bold d-flex align-items-center fs-5">
-                                        Max Smith                    <span class="badge badge-light-success fw-bold fs-8 px-2 py-1 ms-2">Pro</span>
+                                        <?= Html::encode($displayName) ?>
                                     </div>
 
-                                    <a href="index.html#" class="fw-semibold text-muted text-hover-primary fs-7">
-                                        max@kt.com                </a>
+                                    <a href="#" class="fw-semibold text-muted text-hover-primary fs-7">
+                                        <?= Html::encode($displayEmail) ?>
+                                    </a>
                                 </div>
                                 <!--end::Username-->
                             </div>
@@ -307,18 +316,10 @@ $this->beginPage();
 
                         <!--begin::Menu item-->
                         <div class="menu-item px-5">
-                            <a href="<?= \yii\helpers\Url::to(['/profile/change-password']) ?>" class="menu-link px-5">
-                                Change Password
-                            </a>
-                        </div>
-                        <!--end::Menu item-->
-
-                        <!--begin::Menu item-->
-                        <div class="menu-item px-10">
-                            <?= \yii\helpers\Html::beginForm(['/site/logout'], 'post') ?>
+                            <?= \yii\helpers\Html::beginForm(['/site/logout'], 'post', ['class' => 'd-inline']) ?>
                             <?= \yii\helpers\Html::submitButton(
-                                'Sign Out',
-                                ['class' => 'menu-link px-5 btn btn-link logout text-decoration-none',]
+                                '<span class="menu-link px-5">Sign Out</span>',
+                                ['class' => 'btn btn-link p-0 m-0 text-start text-decoration-none']
                             ) ?>
                             <?= \yii\helpers\Html::endForm() ?>
                         </div>
@@ -562,7 +563,7 @@ $this->beginPage();
 
 
                 <!--begin::Content-->
-                <div id="kt_app_content" class="app-content pt-0 flex-column-fluid">
+                <div id="kt_app_content" class="app-content pt-10 flex-column-fluid">
                     <div class="container-xxl">
                         <?php
                         use kartik\growl\Growl;

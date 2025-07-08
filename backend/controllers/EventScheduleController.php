@@ -2,36 +2,22 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
 use common\models\Events;
 use common\models\EventSchedule;
 use common\models\EventScheduleSearch;
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * EventScheduleController implements the CRUD actions for EventSchedule model.
  */
-class EventScheduleController extends Controller
+class EventScheduleController extends AdminController
 {
     /**
      * @inheritDoc
      */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
 
     /**
      * Lists all EventSchedule models.
@@ -90,12 +76,15 @@ class EventScheduleController extends Controller
     {
         $model = new \common\models\EventSchedule();
         $model->event_id = $event_id;
-
+        $event = Events::findOne($event_id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['manage', 'event_id' => $event_id]);
         }
 
-        return $this->render('create', ['model' => $model]);
+        return $this->renderAjax('_form', [
+            'model' => $model,
+            'event' => $event,
+        ]);
     }
 
 
@@ -110,12 +99,15 @@ class EventScheduleController extends Controller
     {
         $model = $this->findModel($id);
         $event_id = $model->event_id;
-
+        $event = Events::findOne($model->event_id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['manage', 'event_id' => $event_id]);
         }
 
-        return $this->render('update', ['model' => $model]);
+        return $this->renderAjax('_form', [
+            'model' => $model,
+            'event' => $event,
+        ]);
     }
 
     /**

@@ -71,6 +71,8 @@ class Settings extends \yii\db\ActiveRecord
         $this->socials = json_decode($this->socials, true);
     }
 
-
-
+    public static function getValue($key)
+    {
+        return static::find()->where(['key' => $key])->select('value')->scalar();
+    }
 }

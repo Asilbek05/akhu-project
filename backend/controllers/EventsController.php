@@ -2,36 +2,18 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
 use common\models\Events;
 use common\models\EventsSearch;
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * EventsController implements the CRUD actions for Events model.
  */
-class EventsController extends Controller
+class EventsController extends AdminController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
-
     /**
      * Lists all Events models.
      *
@@ -46,6 +28,8 @@ class EventsController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+
+        
     }
 
 
@@ -132,4 +116,5 @@ class EventsController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }

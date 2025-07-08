@@ -12,13 +12,9 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'leadership_id')->textInput() ?>
-
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'sort_order')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

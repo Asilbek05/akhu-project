@@ -145,6 +145,7 @@ Modal::end();
                                         );
                                     }
                                 ],
+
                                 [
                                     'class' => ActionColumn::class,
                                     'template' => '{view} {update} {delete}',

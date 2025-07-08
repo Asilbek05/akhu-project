@@ -42,9 +42,13 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
         'k' => 
         array (
             'kartik\\time\\' => 12,
+            'kartik\\select2\\' => 15,
             'kartik\\plugins\\fileinput\\' => 25,
             'kartik\\growl\\' => 13,
+            'kartik\\grid\\' => 12,
             'kartik\\file\\' => 12,
+            'kartik\\dialog\\' => 14,
+            'kartik\\daterange\\' => 17,
             'kartik\\date\\' => 12,
             'kartik\\base\\' => 12,
         ),
@@ -161,6 +165,10 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-timepicker/src',
         ),
+        'kartik\\select2\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-select2/src',
+        ),
         'kartik\\plugins\\fileinput\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/bootstrap-fileinput',
@@ -169,9 +177,21 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-growl/src',
         ),
+        'kartik\\grid\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-grid/src',
+        ),
         'kartik\\file\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-fileinput/src',
+        ),
+        'kartik\\dialog\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-dialog/src',
+        ),
+        'kartik\\daterange\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-date-range/src',
         ),
         'kartik\\date\\' => 
         array (

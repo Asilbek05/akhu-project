@@ -1,84 +1,137 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\grid\GridView;
+use yii\widgets\Pjax;
 
-/** @var yii\web\View $this */
-/** @var yii\data\ActiveDataProvider $dataProvider */
-
-$this->title = 'Leadership';
+$this->title = 'Rahbarlar';
+$this->params['breadcrumbs'][] = ['label' => 'Bosh sahifa', 'url' => ['/site/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="leadership-index">
+<div class="d-flex flex-column flex-column-fluid">
+    <!--begin::Toolbar-->
+    <div id="kt_app_toolbar" class="app-toolbar pt-6 pb-2">
+        <div id="kt_app_toolbar_container" class="container-fluid d-flex align-items-stretch">
+            <div class="app-toolbar-wrapper d-flex flex-stack flex-wrap gap-4 w-100">
+                <!-- Page title -->
+                <div class="page-title d-flex flex-column justify-content-center gap-1 me-3">
+                    <h1 class="page-heading text-gray-900 fw-bold fs-3 m-0">Rahbarlar</h1>
+                    <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-1">
+                        <li class="breadcrumb-item text-muted">
+                            <a href="<?= Url::to(['/site/index']) ?>" class="text-muted text-hover-primary">Bosh sahifa</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <span class="bullet bg-gray-500 w-5px h-2px"></span>
+                        </li>
+                        <li class="breadcrumb-item text-muted">Rahbarlar</li>
+                    </ul>
+                </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0"><?= Html::encode($this->title) ?></h1>
-        <?= Html::a('Create Leadership', ['create'], ['class' => 'btn btn-success']) ?>
-    </div>
-    <?= $this->render('_search', ['model' => $searchModel]) ?>
-    <div class="row">
-        <?php foreach ($dataProvider->getModels() as $model): ?>
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card h-100 shadow border-0" style="border-radius: 0.75rem; overflow: hidden; transition: transform 0.2s;">
-                    <div class="card-body p-4">
-                        <h5 class="card-title fw-bold mb-2"><?= Html::encode($model->name) ?></h5>
-                        <p class="text-muted mb-3"><?= Html::encode($model->position) ?></p>
-                        <ul class="list-unstyled mb-3 small">
-                            <li><strong>Email:</strong> <?= Html::encode($model->email) ?></li>
-                            <li><strong>Phone:</strong> <?= Html::encode($model->phone) ?></li>
-                            <li><strong>Sort Order:</strong> <?= Html::encode($model->sort_order) ?></li>
-                            <li class="text-muted">Created: <?= Yii::$app->formatter->asDate($model->created_at) ?></li>
-                            <li class="text-muted">Updated: <?= Yii::$app->formatter->asDate($model->updated_at) ?></li>
-                        </ul>
-                    </div>
-
-                    <div class="card-footer bg-primary text-white d-flex justify-content-between align-items-center p-3">
-                        <?php if ($model->photo): ?>
-                            <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#photoModal<?= $model->id ?>">
-                                View Photo
-                            </button>
-                        <?php else: ?>
-                            <span class="text-light small">No Photo</span>
-                        <?php endif; ?>
-
-                        <div class="d-flex gap-2">
-                            <?= Html::a('Edit', ['update', 'id' => $model->id], ['class' => 'btn btn-light btn-sm']) ?>
-                            <?= Html::a('Sections', ['leadership-sections/manage', 'leadership_id' => $model->id], ['class' => 'btn btn-warning btn-sm']) ?>
-                            <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-                                'class' => 'btn btn-danger btn-sm',
-                                'data' => [
-                                    'confirm' => 'Are you sure you want to delete this item?',
-                                    'method' => 'post',
-                                ],
-                            ]) ?>
-                        </div>
-                    </div>
+                <!-- Action buttons -->
+                <div class="d-flex align-items-center gap-2 gap-lg-3">
+                    <?= Html::a('<i class="bi bi-plus-circle me-1"></i> Yangi rahbar qo‘shish', ['create'], [
+                        'class' => 'btn btn-flex btn-primary h-40px fs-7 fw-bold',
+                    ]) ?>
                 </div>
             </div>
-
-            <!-- Modal for viewing photo -->
-            <?php if ($model->photo): ?>
-                <div class="modal fade" id="photoModal<?= $model->id ?>" tabindex="-1" aria-labelledby="photoModalLabel<?= $model->id ?>" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header bg-primary text-white">
-                                <h5 class="modal-title" id="photoModalLabel<?= $model->id ?>"><?= Html::encode($model->name) ?> - Photo</h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body text-center">
-                                <img src="<?= Yii::$app->urlManagerFrontend->baseUrl . $model->photo ?>" class="img-fluid rounded shadow">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php endif; ?>
-        <?php endforeach; ?>
+        </div>
     </div>
-</div>
+    <!--end::Toolbar-->
 
-<style>
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-</style>
+    <!--begin::Content-->
+    <div id="kt_app_content" class="app-content pt-3 flex-column-fluid">
+        <div id="kt_app_content_container" class="container-fluid">
+            <div class="card">
+                <div class="card-body py-4">
+                    <!--begin::Table-->
+                    <div class="table-responsive">
+                        <?php Pjax::begin(); ?>
+
+                        <?= GridView::widget([
+                            'dataProvider' => $dataProvider,
+                            'filterModel' => $searchModel,
+                            'layout' => '{items}{pager}',
+                            'summary' => '', // "Showing 1–10" matnini yo'q qilamiz
+                            'tableOptions' => [
+                                'class' => 'table align-middle table-row-dashed fs-6 gy-5 mb-0',
+                            ],
+                            'columns' => [
+                                [
+
+                                    'format' => 'html',
+                                    'filter' => false,
+                                    'value' => function ($model) {
+                                        if ($model->photo) {
+                                            return Html::img(
+                                                $model->getPhotoUrl(),
+                                                [
+                                                    'class' => 'rounded-circle shadow-sm',
+                                                    'style' => 'width:40px; height:40px; object-fit:cover;',
+                                                    'alt' => 'photo'
+                                                ]
+                                            );
+                                        }
+                                        return '<span class="badge bg-secondary px-2 py-1">Yo‘q</span>';
+                                    },
+                                    'contentOptions' => ['class' => 'text-center'],
+                                ],
+                                [
+                                    'attribute' => 'name',
+                                    'format' => 'raw',
+                                    'value' => fn($model) =>
+                                    Html::tag('span', Html::encode($model->name), ['class' => 'fw-semibold text-gray-900']),
+                                ],
+                                'position',
+                                'phone',
+
+                                [
+                                    'attribute' => 'created_at',
+                                    'format' => ['date', 'php:Y-m-d'],
+                                    'filter' => false,
+                                    'label' => 'Yaratilgan',
+                                    'contentOptions' => ['class' => 'text-muted text-center'],
+                                ],
+                                [
+                                    'label' => 'Bo‘limlar',
+                                    'format' => 'raw',
+
+                                    'value' => fn($model) =>
+                                    Html::a('<i class="bi bi-layers me-1"></i>', ['leadership-sections/manage', 'leadership_id' => $model->id], [
+                                        'class' => 'btn btn-sm btn-secondary', // SARIQ O'RNIGA KULRANG
+                                        'title' => 'Rahbar bo‘limlarini boshqarish',
+                                    ]),
+                                    'contentOptions' => ['class' => 'text-center'],
+                                ],
+                                [
+                                    'class' => 'yii\grid\ActionColumn',
+                                    'header' => 'Amallar',
+                                    'template' => '{sections} {update} {delete}',
+                                    'buttons' => [
+                                       'update' => fn($url, $model) =>
+                                        Html::a('<i class="bi bi-pencil"></i>', $url, [
+                                            'class' => 'btn btn-icon btn-sm btn-light-primary me-1',
+                                            'title' => 'Tahrirlash',
+                                        ]),
+                                        'delete' => fn($url, $model) =>
+                                        Html::a('<i class="bi bi-trash"></i>', $url, [
+                                            'class' => 'btn btn-icon btn-sm btn-light-danger',
+                                            'title' => 'O‘chirish',
+                                            'data' => ['confirm' => 'Haqiqatan ham o‘chirmoqchimisiz?', 'method' => 'post'],
+                                        ]),
+                                    ],
+                                    'contentOptions' => ['class' => 'text-nowrap text-center'],
+                                ],
+                            ],
+                        ]) ?>
+
+                        <?php Pjax::end(); ?>
+                    </div>
+                    <!--end::Table-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Content-->
+</div>

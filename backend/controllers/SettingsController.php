@@ -1,13 +1,13 @@
 <?php
 namespace backend\controllers;
 
+use backend\components\AdminController;
 use Yii;
 use common\models\Settings;
 use yii\web\BadRequestHttpException;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
-class SettingsController extends Controller
+class SettingsController extends AdminController
 {
     public function actionIndex()
     {

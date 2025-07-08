@@ -47,6 +47,15 @@ class Posts extends \yii\db\ActiveRecord
             ],
         ];
     }
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+
+        $scenarios['create'] = ['title', 'content', 'slug', 'images', 'user_id'];
+        $scenarios['update'] = ['title', 'content', 'slug', 'images', 'user_id'];
+
+        return $scenarios;
+    }
     public function rules()
     {
         return [
@@ -58,6 +67,7 @@ class Posts extends \yii\db\ActiveRecord
             [['content'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['title', 'slug'], 'string', 'max' => 255],
+            ['images', 'required', 'on' => 'create'],
             [['images'], 'file', 'extensions' => 'png, jpg, jpeg', 'maxFiles' => 10],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -99,6 +109,30 @@ class Posts extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+    public function getImagesUrls()
+    {
+        $images = PostImages::find()->where(['post_id' => $this->id])->all();
+        $urls = [];
+        foreach ($images as $img) {
+            $urls[] = Yii::$app->params['uploadBaseUrl'] . '/posts/' . $img->image;
+        }
+        return $urls;
+    }
+
+    public function getImagesPreviewConfig()
+    {
+        $images = PostImages::find()->where(['post_id' => $this->id])->all();
+        $config = [];
+        foreach ($images as $img) {
+            $config[] = [
+                'caption' => $img->image,
+                'key' => $img->id,
+                'url' => \yii\helpers\Url::to(['delete-image', 'id' => $img->id]),
+            ];
+        }
+        return $config;
+    }
+
 //
 //    public function beforeSave($insert)
 //    {

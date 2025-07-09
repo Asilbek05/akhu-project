@@ -1,37 +1,28 @@
 <?php
-
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var common\models\User $model */
-/** @var yii\widgets\ActiveForm $form */
-
+/** @var \common\models\User $model */
+/** @var \yii\widgets\ActiveForm $form */
+/** @var bool $isUpdate */
 ?>
-
 
 <div class="user-form">
     <div class="row g-3">
         <div class="col-md-6">
             <?= $form->field($model, 'username')->textInput([
-                'placeholder' => 'Enter username',
                 'class' => 'form-control form-control-lg',
             ]) ?>
         </div>
 
         <div class="col-md-6">
             <?= $form->field($model, 'email')->input('email', [
-                'placeholder' => 'example@mail.com',
                 'class' => 'form-control form-control-lg',
             ]) ?>
         </div>
 
-
-        <div
-
         <div class="col-md-6">
             <?= $form->field($model, 'password')->passwordInput([
-                'placeholder' => 'Enter password',
                 'class' => 'form-control form-control-lg',
             ]) ?>
         </div>
@@ -49,4 +40,3 @@ use yii\widgets\ActiveForm;
         <?php endif; ?>
     </div>
 </div>
-

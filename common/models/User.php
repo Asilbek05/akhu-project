@@ -49,7 +49,14 @@ class User extends ActiveRecord implements IdentityInterface
             TimestampBehavior::class,
         ];
     }
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['create'] = ['username', 'email', 'password', 'role'];
+        $scenarios['update'] = ['username', 'email', 'role'];
 
+        return $scenarios;
+    }
     /**
      * {@inheritdoc}
      */
@@ -58,6 +65,8 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             [['username', 'email', 'role', 'password'], 'required'],
             ['email', 'email'],
+            [['password'], 'safe'],
+            [['password'], 'required', 'on' => 'create'],
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
         ];

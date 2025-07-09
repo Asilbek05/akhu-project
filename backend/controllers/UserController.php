@@ -46,6 +46,7 @@ class UserController extends Controller
     public function actionCreate()
     {
         $model = new \common\models\User();
+        $model = new User(['scenario' => 'create']);
 
         if ($model->load(Yii::$app->request->post())) {
             $model->status = \common\models\User::STATUS_ACTIVE;
@@ -71,7 +72,7 @@ class UserController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $model->scenario = 'update';
         if ($model->role === 'superadmin' && Yii::$app->user->identity->role !== 'superadmin') {
             throw new \yii\web\ForbiddenHttpException('Siz superadminni o‘zgartira olmaysiz.');
         }
@@ -81,6 +82,14 @@ class UserController extends Controller
         }
 
         return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+    public function actionLoadUpdateForm($id)
+    {
+        $model = $this->findModel($id);
+
+        return $this->renderAjax('_update_form_wrapper', [
             'model' => $model,
         ]);
     }

@@ -124,8 +124,8 @@ class SiteController extends Controller
             $date->modify("+$i days");
 
             $futureDays[] = [
-                'label' => $date->format('D'),    // Mon, Tue...
-                'day'   => $date->format('d'),    // 01, 02...
+                'label' => $date->format('D'),
+                'day'   => $date->format('d'),
                 'date'  => $date->format('Y-m-d'),
                 'id'    => 'kt_timeline_tab_' . ($i + 1),
                 'active'=> $i === 0,

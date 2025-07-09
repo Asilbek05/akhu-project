@@ -4,14 +4,12 @@ use yii\bootstrap5\Modal;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-/** @var yii\web\View $this */
-/** @var common\models\User[] $users */
-
 $this->title = 'Foydalanuvchilar';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="container py-5">
+    <!-- Yangi foydalanuvchi modal -->
     <?php if (Yii::$app->user->identity->role === 'superadmin'): ?>
         <div class="row justify-content-center mb-4">
             <div class="col-12 col-sm-10 col-md-6 col-lg-4">
@@ -33,31 +31,28 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php foreach ($users as $user): ?>
             <div class="col-12 col-sm-6 col-lg-4">
                 <div class="user-card p-3 rounded-3">
-                    <!-- 1-qator: Username + Badge + Actions -->
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <div class="d-flex align-items-center gap-2">
                             <span class="fw-semibold"><?= Html::encode($user->username) ?></span>
                             <span class="badge role-badge bg-<?= $user->role === 'superadmin' ? 'danger' : ($user->role === 'admin' ? 'primary' : 'secondary') ?>">
-            <?= strtoupper($user->role) ?>
-        </span>
+                                <?= strtoupper($user->role) ?>
+                            </span>
                         </div>
                         <div class="d-flex gap-2">
-                            <?= Html::a('<i class="bi bi-pencil"></i>', ['update', 'id' => $user->id], [
-                                'class' => 'icon-pill edit-icon',
-                                'title' => 'Tahrirlash'
+                            <?= Html::button('<i class="bi bi-pencil"></i>', [
+                                'class' => 'icon-pill edit-icon btn-edit-user',
+                                'title' => 'Tahrirlash',
+                                'data-id' => $user->id
                             ]) ?>
                             <?php if ($user->role !== 'superadmin'): ?>
                                 <?= Html::a('<i class="bi bi-trash"></i>', ['delete', 'id' => $user->id], [
                                     'class' => 'icon-pill delete-icon',
                                     'data-method' => 'post',
                                     'data-confirm' => 'Userni o‘chirishni tasdiqlaysizmi?',
-                                    'title' => 'O‘chirish'
                                 ]) ?>
                             <?php endif; ?>
                         </div>
                     </div>
-
-                    <!-- 2-qator: Email -->
                     <div class="text-muted small"><?= Html::encode($user->email) ?></div>
                 </div>
             </div>
@@ -65,30 +60,52 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 </div>
 
-
-
 <?php
+// CREATE MODAL
 $model = new User();
-
 Modal::begin([
-    'title' => '<i class="bi bi-person-plus me-2 text-primary"></i> Create New User',
+    'title' => '<i class="bi bi-person-plus me-2 text-primary"></i> Yangi foydalanuvchi',
     'id' => 'addUserModal',
     'size' => Modal::SIZE_LARGE,
     'options' => ['tabindex' => false],
 ]);
-$form = \yii\widgets\ActiveForm::begin([
+$form = ActiveForm::begin([
     'action' => ['user/create'],
     'id' => 'create-user-form',
 ]);
 echo $this->render('_form', [
     'model' => $model,
     'form' => $form,
+    'isUpdate' => false,
 ]);
-echo Html::submitButton('<i class="bi bi-check-circle me-1"></i> Create User', ['class' => 'btn btn-success mt-3']);
-\yii\widgets\ActiveForm::end();
+echo Html::submitButton('<i class="bi bi-check-circle me-1"></i> Yaratish', ['class' => 'btn btn-success mt-3']);
+ActiveForm::end();
 Modal::end();
 ?>
 
+<?php
+Modal::begin([
+    'id' => 'updateUserModal',
+    'title' => 'Foydalanuvchini tahrirlash',
+    'size' => Modal::SIZE_LARGE,
+]);
+?>
+<div id="updateUserContent">Yuklanmoqda...</div>
+<?php Modal::end(); ?>
+
+
+<?php
+$this->registerJs(<<<JS
+$(document).on('click', '.btn-edit-user', function () {
+    const userId = $(this).data('id');
+    $('#updateUserModal').modal('show');
+    $('#updateUserContent').html('<div class="p-3 text-center text-muted">Yuklanmoqda...</div>');
+    $.get('/user/load-update-form?id=' + userId, function(data) {
+        $('#updateUserContent').html(data);
+    });
+});
+JS);
+?>
 
 
 <style>

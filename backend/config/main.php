@@ -70,6 +70,7 @@ return [
                 'event/<event_id:\d+>/schedules' => 'event-schedule/manage',
                 'leadership-sections/manage/<leadership_id:\d+>' => 'leadership-sections/manage',
                 'application-requests/set-status' => 'application-requests/set-status',
+
             ],
         ],
 

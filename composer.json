@@ -27,7 +27,8 @@
         "kartik-v/yii2-widget-growl": "@dev",
         "kartik-v/yii2-grid": "^3.5",
         "kartik-v/yii2-widget-select2": "^2.2",
-        "kartik-v/yii2-date-range": "@dev"
+        "kartik-v/yii2-date-range": "@dev",
+        "kartik-v/yii2-export": "^1.4"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

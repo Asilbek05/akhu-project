@@ -2,6 +2,7 @@
 namespace backend\controllers;
 
 use backend\components\AdminController;
+use common\models\Logs;
 use Yii;
 use common\models\Settings;
 use yii\web\BadRequestHttpException;
@@ -41,6 +42,7 @@ class SettingsController extends AdminController
             }
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', 'Updated successfully.');
+                Logs::add('settings-update', 'Settings yangilandi: ' , 'update');
                 return $this->redirect(['index']);
             }
         }

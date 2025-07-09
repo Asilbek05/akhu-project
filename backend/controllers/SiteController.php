@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use common\models\Leadership;
 use common\models\LoginForm;
+use common\models\Logs;
 use common\models\PasswordResetRequestForm;
 use common\models\Posts;
 use Yii;
@@ -168,6 +169,8 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            Logs::add('login', 'Login qilindi: ' . $model->username, 'info');
+
             return $this->goBack();
         }
 
@@ -185,6 +188,16 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
+        $user = Yii::$app->user->identity;
+
+        if ($user) {
+            Logs::add(
+                'auth_logout',
+                'Logout qilindi: ' . $user->username,
+                'info'
+            );
+        }
+
         Yii::$app->user->logout();
 
         return $this->goHome();

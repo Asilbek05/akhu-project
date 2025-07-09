@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\components\AdminController;
 use common\models\Leadership;
 use common\models\LeadershipSearch;
+use common\models\Logs;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -59,6 +60,7 @@ class LeadershipController extends AdminController
                 $model->uploadPhoto();
                 if ($model->save(false)) {
                     Yii::$app->session->setFlash('success', 'Leadership created successfully.');
+                    Logs::add('leadership-create', 'Leaderchip yaratildi: ' . $model->name, 'create');
                     return $this->redirect(['index']);
                 }
             }
@@ -82,6 +84,8 @@ class LeadershipController extends AdminController
                 $model->uploadPhoto();
                 if ($model->save(false)) {
                     Yii::$app->session->setFlash('success', 'Leadership updated successfully.');
+                    Logs::add('leadership-update', 'Leaderchip tahrirlandi: ' . $model->name, 'update');
+
                     return $this->redirect(['index']);
                 }
             }
@@ -98,8 +102,10 @@ class LeadershipController extends AdminController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        Logs::add('leadership-delete', 'Leaderchip o`chirildi: ' . $model->name, 'delete');
 
+        $model ->delete();
         return $this->redirect(['index']);
     }
 

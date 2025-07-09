@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Logs;
 use Yii;
 use common\models\User;
 use yii\web\Controller;
@@ -59,6 +60,8 @@ class UserController extends Controller
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'User successfully created.');
+                Logs::add('user-create', 'User yaratildi: ' . $model->username, 'create');
+
                 return $this->redirect(['index']);
             }
         }
@@ -78,6 +81,8 @@ class UserController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Logs::add('user-update', 'User tahrirlandi: ' . $model->username, 'update');
+
             return $this->redirect(['index']);
         }
 
@@ -100,7 +105,7 @@ class UserController extends Controller
         if ($model->role === 'superadmin') {
             throw new \yii\web\ForbiddenHttpException('Superadmin foydalanuvchisini o‘chirish mumkin emas.');
         }
-
+        Logs::add('user-delete', 'User o`chirildi: ' . $model->username, 'delete');
         $model->delete();
 
         return $this->redirect(['index']);
@@ -124,6 +129,8 @@ class UserController extends Controller
             $model->generateAuthKey();
             if ($model->save(false)) {
                 Yii::$app->session->setFlash('success', 'Password changed successfully.');
+                Logs::add('user-password', 'Parol o`zgartirildi: ' . $model->username, 'update');
+
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }

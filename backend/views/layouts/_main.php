@@ -63,7 +63,6 @@ $this->beginPage();
         >
 
             <div class="d-flex flex-stack flex-grow-1">
-
                 <div class="app-header-logo d-flex align-items-center ps-lg-12" id="kt_app_header_logo">
                     <!--begin::Sidebar toggle-->
                     <div
@@ -92,7 +91,6 @@ $this->beginPage();
                     <style>
                         .logo-img {
                             height: 60px !important; /* logoni kattalashtiradi */
-                            margin-left: 5px; /* o‘ngga suradi */
                         }
 
                         .app-sidebar-logo {
@@ -541,6 +539,15 @@ $this->beginPage();
             <i class="ki-outline ki-user fs-2"></i>
         </span>
                                 <span class="menu-title">Users</span>
+                            </a>
+                        </div>
+
+                        <div class="menu-item <?= Yii::$app->controller->id === 'logs' ? 'here show' : '' ?>">
+                            <a href="<?= \yii\helpers\Url::to(['/logs/index']) ?>" class="menu-link <?= Yii::$app->controller->id === 'logs' ? 'active' : '' ?>">
+        <span class="menu-icon">
+            <i class="ki-outline ki-notepad fs-2"></i>
+        </span>
+                                <span class="menu-title">Logs</span>
                             </a>
                         </div>
 

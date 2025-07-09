@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\components\AdminController;
+use common\models\Logs;
 use common\models\PostImages;
 use common\models\Posts;
 use common\models\PostsSearch;
@@ -63,6 +64,7 @@ class PostsController extends AdminController
             if ($model->validate() && $model->save()) {
                 $this->saveImages($model);
                 Yii::$app->session->setFlash('success', 'Post yaratildi!');
+                Logs::add('post-create', 'Post yaratildi: ' . $model->title, 'create');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
@@ -98,6 +100,7 @@ class PostsController extends AdminController
             if ($model->validate() && $model->save()) {
                 $this->saveImages($model);
                 Yii::$app->session->setFlash('success', 'Post yangilandi!');
+                Logs::add('post-update', 'Post yangilandi: ' . $model->title, 'update');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
@@ -135,8 +138,9 @@ class PostsController extends AdminController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        $model = $this->findModel($id);
+        Logs::add('post-delete', 'Post o`chirildi: ' . $model->title, 'delete');
+        $model->delete();
         return $this->redirect(['index']);
     }
     public function actionToggleStatus($id)

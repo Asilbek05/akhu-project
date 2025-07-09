@@ -6,6 +6,7 @@ use backend\components\AdminController;
 use common\models\Events;
 use common\models\EventSchedule;
 use common\models\EventScheduleSearch;
+use common\models\Logs;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -78,6 +79,8 @@ class EventScheduleController extends AdminController
         $model->event_id = $event_id;
         $event = Events::findOne($event_id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Logs::add('event-schedule-create', 'Schedule yaratildi: ' . $model->title, 'create');
+
             return $this->redirect(['manage', 'event_id' => $event_id]);
         }
 
@@ -101,6 +104,8 @@ class EventScheduleController extends AdminController
         $event_id = $model->event_id;
         $event = Events::findOne($model->event_id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Logs::add('event-schedule-update', 'Schedule tahtirlandi: ' . $model->title, 'update');
+
             return $this->redirect(['manage', 'event_id' => $event_id]);
         }
 
@@ -121,6 +126,8 @@ class EventScheduleController extends AdminController
     {
         $model = $this->findModel($id);
         $event_id = $model->event_id;
+        Logs::add('event-schedule-delete', 'Schedule o`chirildi: ' . $model->title, 'delete');
+
         $model->delete();
 
         return $this->redirect(['manage', 'event_id' => $event_id]);

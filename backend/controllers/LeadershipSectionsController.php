@@ -6,6 +6,7 @@ use backend\components\AdminController;
 use common\models\Leadership;
 use common\models\LeadershipSections;
 use common\models\LeadershipSectionsSearch;
+use common\models\Logs;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -66,6 +67,7 @@ class LeadershipSectionsController extends AdminController
         if (Yii::$app->request->isPost && $newSection->load(Yii::$app->request->post())) {
             if ($newSection->save()) {
                 Yii::$app->session->setFlash('success', 'Section added successfully.');
+                Logs::add('leader-section-create', 'Section o`chirildi: ' . $newSection->title, 'create');
                 return $this->redirect(['manage', 'leadership_id' => $leadership_id]);
             }
         }
@@ -132,7 +134,9 @@ class LeadershipSectionsController extends AdminController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->delete();
+        Logs::add('leader-section-delete', 'Section o`chirildi: ' . $model->title, 'create');
         return $this->redirect(['index']);
     }
     /**

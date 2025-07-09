@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\components\AdminController;
 use common\models\Events;
 use common\models\EventsSearch;
+use common\models\Logs;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -57,6 +58,8 @@ class EventsController extends AdminController
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', 'Event muvaffaqiyatli yaratildi.');
+            Logs::add('event-create', 'Event yaratildi: ' . $model->title, 'create');
+
             return $this->redirect(['index']);
         }
 
@@ -79,6 +82,8 @@ class EventsController extends AdminController
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             Yii::$app->session->setFlash('success', 'Event tahrirlandi.');
+            Logs::add('event-update', 'Event tahrirlandi: ' . $model->title, 'update');
+
             return $this->redirect(['index']);
         }
 
@@ -96,7 +101,9 @@ class EventsController extends AdminController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        Logs::add('event-delete', 'Event o`chirildi: ' . $model->title, 'delete');
+        $model->delete();
         Yii::$app->session->setFlash('info', 'Event o‘chirildi.');
         return $this->redirect(['index']);
     }

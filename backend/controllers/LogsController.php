@@ -9,7 +9,7 @@ use common\models\Logs;
 
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
-use yii\filters\AccessControl;
+
 
 class LogsController extends AdminController
 {
@@ -25,8 +25,6 @@ class LogsController extends AdminController
             'level' => $level,
         ]);
     }
-
-
 
     public function actionView($id)
     {
@@ -50,21 +48,15 @@ class LogsController extends AdminController
 
         $logs = Logs::find()->orderBy(['created_at' => SORT_DESC])->all();
 
-        // Disable layout & rendering
         Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
         Yii::$app->response->headers->set('Content-Type', 'text/csv; charset=utf-8');
         Yii::$app->response->headers->set('Content-Disposition', 'attachment; filename="logs_export_' . date('Y-m-d_H-i') . '.csv"');
-
-        // Clear output buffer
         if (ob_get_length()) ob_clean();
         $out = fopen('php://output', 'w');
         if ($out === false) {
             throw new \yii\web\ServerErrorHttpException('Cannot open output stream.');
         }
-
-        // Header row
         fputcsv($out, ['ID', 'User', 'Action', 'Message', 'Level', 'IP', 'User Agent', 'Created At']);
-
         foreach ($logs as $log) {
             fputcsv($out, [
                 $log->id,
@@ -88,6 +80,6 @@ class LogsController extends AdminController
             return $model;
         }
 
-        throw new NotFoundHttpException('Sahifa topilmadi.');
+        throw new NotFoundHttpException('Page not Found.');
     }
 }

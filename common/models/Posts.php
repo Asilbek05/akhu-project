@@ -118,6 +118,10 @@ class Posts extends \yii\db\ActiveRecord
         }
         return $urls;
     }
+    public function getFirstImage()
+    {
+        return $this->hasOne(PostImages::class, ['post_id' => 'id'])->orderBy(['id' => SORT_ASC]);
+    }
 
     public function getImagesPreviewConfig()
     {

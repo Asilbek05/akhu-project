@@ -2,6 +2,8 @@
 
 namespace frontend\controllers;
 
+use common\models\Posts;
+use common\models\Slider;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -75,7 +77,16 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $slider = Slider::find()->where(['sort_order' => 1])->one();
+        $latestPosts = Posts::find()->with('firstImage')
+            ->where(['is_published' => 1])
+            ->limit(6)
+            ->orderBy(['created_at' => SORT_DESC])
+            ->all();
+        return $this->render('index', [
+            'slider' => $slider,
+            'latestPosts' => $latestPosts,
+        ]);
     }
 
     /**

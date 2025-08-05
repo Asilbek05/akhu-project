@@ -6,12 +6,15 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 use yii\bootstrap5\Modal;
 
+
+
 $this->title = 'Loglar';
 $this->params['breadcrumbs'][] = ['label' => 'Bosh sahifa', 'url' => ['/site/index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $level = Yii::$app->request->get('level');
 ?>
+
 
 <div class="container-fluid mt-4">
 

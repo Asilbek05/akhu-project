@@ -24,7 +24,7 @@ class AppAsset extends AssetBundle
         'css/main.css',
     ];
     public $js = [
-        'js/jquery-3.7.1.min.js',
+        // 'js/jquery-3.7.1.min.js',
         'js/bootstrap.bundle.min.js',
         'js/swiper.min.js',
         'js/wow.min.js',
@@ -40,5 +40,7 @@ class AppAsset extends AssetBundle
     ];
     public $depends = [
         'yii\web\YiiAsset',
+        'yii\bootstrap5\BootstrapAsset', // yoki 'yii\bootstrap\BootstrapAsset' agar bootstrap 3 ishlatsangiz
+        'yii\widgets\ActiveFormAsset',
     ];
 }

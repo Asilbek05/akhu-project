@@ -19,7 +19,7 @@ class m250709_090522_create_logs_table extends Migration
             'message' => $this->text()->null(),
             'ip' => $this->string(45)->null(),
             'user_agent' => $this->string(512)->null(),
-            'level' => $this->string(50)->defaultValue('info'), // 'info' or 'error'
+            'level' => $this->string(50)->defaultValue('info'),
             'created_at' => $this->integer()->notNull(),
         ]);
 

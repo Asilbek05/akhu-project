@@ -17,6 +17,8 @@ use Yii;
 class ApplicationRequests extends \yii\db\ActiveRecord
 {
 
+    const STATUS_PENDING = 0;
+    const STATUS_REVIEWED = 1;
     /**
      * {@inheritdoc}
      */
@@ -33,11 +35,14 @@ class ApplicationRequests extends \yii\db\ActiveRecord
         return [
             [['message'], 'default', 'value' => null],
             [['status'], 'default', 'value' => 0],
-            [['name', 'phone'], 'required'],
+            [['name', 'phone','email'], 'required'],
             [['message'], 'string'],
             [['status'], 'integer'],
             [['created_at'], 'safe'],
-            [['name', 'phone'], 'string', 'max' => 255],
+            [['name', 'phone','email'], 'string', 'max' => 255],
+            [['code'], 'string', 'max' => 32],
+            ['email', 'email'],
+            ['code', 'unique'],
         ];
     }
 
@@ -49,11 +54,23 @@ class ApplicationRequests extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
+            'email' => 'Email',
             'phone' => 'Phone',
             'message' => 'Message',
             'status' => 'Status',
             'created_at' => 'Created At',
+            'code' => 'Code',
         ];
+    }
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->code = Yii::$app->security->generateRandomString(32);
+            }
+            return true;
+        }
+        return false;
     }
 
 }

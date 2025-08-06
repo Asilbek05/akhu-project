@@ -141,7 +141,7 @@ $rightPosts = array_slice($latestPosts, 2, 3);
                                 <div class="shape shape--2">
                                     <img src="<?= Yii::getAlias('@web/img/shape/vm_shape2.png') ?>" alt="">
                                 </div>
-                            </div>
+                            </div>5
                         </div>
                     </div>
                     <div class="col-lg-6 mt-30">

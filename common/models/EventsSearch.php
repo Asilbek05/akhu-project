@@ -42,9 +42,10 @@ class EventsSearch extends Events
      *
      * @param array $params
      * @param string|null $formName Form name to be used into `->load()` method.
-     *
+     *  
      * @return ActiveDataProvider
      */
+
     public function search($params, $formName = null)
     {
         $query = Events::find();
@@ -79,15 +80,12 @@ class EventsSearch extends Events
             ->andFilterWhere(['like', 'location', $this->location])
             ->andFilterWhere(['like', 'description', $this->description]);
 
-
         if ($this->filter_start_date) {
             $query->andWhere(['>=', 'start_date', $this->filter_start_date]);
         }
         if ($this->filter_end_date) {
             $query->andWhere(['<=', 'start_date', $this->filter_end_date]);
         }
-
-
         return $dataProvider;
     }
 }

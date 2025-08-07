@@ -66,11 +66,21 @@ class ApplicationRequests extends \yii\db\ActiveRecord
     {
         if (parent::beforeSave($insert)) {
             if ($this->isNewRecord) {
-                $this->code = Yii::$app->security->generateRandomString(32);
+                $this->code = Yii::$app->security->generateRandomString(5);
             }
             return true;
         }
         return false;
+    }
+    public function getReply()
+    {
+        return $this->hasOne(ApplicationReplies::class, ['request_id' => 'id']);
+    }
+    public function getReplies()
+    {
+        // 'request_id' - bu sizning ApplicationReplies jadvalingizdagi ustun nomi
+        // 'id' - bu ApplicationRequests jadvalidagi ustun nomi
+        return $this->hasMany(ApplicationReplies::class, ['request_id' => 'id']);
     }
 
 }

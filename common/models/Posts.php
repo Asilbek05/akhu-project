@@ -25,7 +25,7 @@ use yii\db\Expression;
 class Posts extends \yii\db\ActiveRecord
 {
     public $images;
-
+    public $tags;
     /**
      * {@inheritdoc}
      */
@@ -51,8 +51,8 @@ class Posts extends \yii\db\ActiveRecord
     {
         $scenarios = parent::scenarios();
 
-        $scenarios['create'] = ['title', 'content', 'slug', 'images', 'user_id'];
-        $scenarios['update'] = ['title', 'content', 'slug', 'images', 'user_id'];
+        $scenarios['create'] = ['title', 'content', 'slug', 'images', 'user_id', 'tags', 'is_published'];
+        $scenarios['update'] = ['title', 'content', 'slug', 'images', 'user_id', 'tags', 'is_published'];
 
         return $scenarios;
     }
@@ -65,6 +65,7 @@ class Posts extends \yii\db\ActiveRecord
             [['user_id', 'title', 'slug'], 'required'],
             [['user_id'], 'integer'],
             [['content'], 'string'],
+            ['tags', 'safe'],
             [['created_at', 'updated_at'], 'safe'],
             [['title', 'slug'], 'string', 'max' => 255],
             ['images', 'required', 'on' => 'create'],
@@ -156,5 +157,61 @@ class Posts extends \yii\db\ActiveRecord
 //        }
 //        return false;
 //    }
+
+    public function getTags()
+    {
+        return $this->hasMany(Tag::class, ['id' => 'tag_id'])
+            ->viaTable('posts_tag', ['posts_id' => 'id']);
+    }
+
+    /**
+     * Post saqlanganidan so'ng, teglarni saqlash uchun ishga tushadi
+     * @param bool $insert
+     * @param array $changedAttributes
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        if (!$insert) {
+            PostsTag::deleteAll(['posts_id' => $this->id]);
+        }
+
+        if (is_array($this->tags)) {
+            foreach ($this->tags as $tagNameOrId) {
+                $tagId = null;
+
+                if (!is_numeric($tagNameOrId)) {
+                    // Yangi teg yaratish yoki mavjudini topish
+                    $tag = Tag::findOne(['name' => trim($tagNameOrId)]);
+                    if (!$tag) {
+                        $tag = new Tag();
+                        $tag->name = trim($tagNameOrId);
+                        $tag->slug = \yii\helpers\Inflector::slug(trim($tagNameOrId));
+                        if ($tag->save()) {
+                            $tagId = $tag->id;
+                        } else {
+                            Yii::error('Yangi teg saqlashda xato: ' . print_r($tag->errors, true), 'posts.afterSave');
+                        }
+                    } else {
+                        $tagId = $tag->id;
+                    }
+                } else {
+                    $tagId = (int)$tagNameOrId;
+                }
+
+                // PostsTag modelini yaratish va saqlash
+                if ($tagId) {
+                    $postTag = new PostsTag();
+                    $postTag->posts_id = $this->id;
+                    $postTag->tag_id = $tagId;
+                    if (!$postTag->save()) {
+                        // Agar saqlash muvaffaqiyatsiz bo'lsa, xatolarni logga yozadi
+                        Yii::error('PostsTag saqlashda xato: ' . print_r($postTag->errors, true), 'posts.afterSave');
+                    }
+                }
+            }
+        }
+    }
 
 }

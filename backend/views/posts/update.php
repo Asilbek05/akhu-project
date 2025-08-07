@@ -52,6 +52,7 @@ $this->params['breadcrumbs'][] = 'Tahrirlash';
                 <div class="card-body py-5 px-7">
                     <?= $this->render('_form', [
                         'model' => $model,
+                        'allTags' => $allTags,
                     ]) ?>
                 </div>
             </div>

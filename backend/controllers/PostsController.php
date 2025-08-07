@@ -8,7 +8,10 @@ use common\models\PostImages;
 use common\models\Posts;
 use common\models\PostsSearch;
 
+use common\models\Tag;
 use Yii;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
@@ -58,29 +61,37 @@ class PostsController extends AdminController
         $model = new Posts(['scenario' => 'create']);
 
         if ($model->load(Yii::$app->request->post())) {
+            // Agar postni yaratayotgan bo'lsa, user_id va slug'ni avtomatik to'ldiramiz.
             $model->user_id = Yii::$app->user->isGuest ? 1 : Yii::$app->user->id;
-            $model->slug = \yii\helpers\Inflector::slug($model->title);
+            $model->slug = Inflector::slug($model->title);
+
+            // Teglar uchun kelgan qiymatlarni saqlab turamiz, chunki model->save() dan keyin ular o'chiriladi.
+            $selectedTags = $model->tags;
 
             if ($model->validate() && $model->save()) {
+                // Post saqlangandan keyin rasmlarni saqlaymiz va teglar bilan bog'laymiz.
                 $this->saveImages($model);
-                Yii::$app->session->setFlash('success', 'Post yaratildi!');
-                Logs::add('post-create', 'Post yaratildi: ' . $model->title, 'create');
+                $this->syncTags($model, $selectedTags); // Yangi funksiya orqali teglarni saqlash
+
+                Yii::$app->session->setFlash('success', 'Post muvaffaqiyatli yaratildi!');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
 
-        return $this->render('create', ['model' => $model]);
+        $allTags = Tag::find()->all();
+
+        return $this->render('create', [
+            'model' => $model,
+            'allTags' => $allTags,
+        ]);
     }
 
-
-
-
     /**
-     * Updates an existing Posts model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
+     * Mavjud postni yangilash sahifasi.
+     *
+     * @param int $id Post ID'si
      * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @throws NotFoundHttpException Agar post topilmasa
      */
     public function actionUpdate($id)
     {
@@ -88,29 +99,51 @@ class PostsController extends AdminController
         if (!$model) {
             throw new NotFoundHttpException('Post topilmadi.');
         }
+
         $model->scenario = 'update';
 
-        if ($model->load(Yii::$app->request->post())) {
-            $model->user_id = Yii::$app->user->isGuest ? 1 : Yii::$app->user->id;
+        // Formaga mavjud teglarni yuklab berish uchun ID'larini ajratib olamiz.
+        $model->tags = ArrayHelper::getColumn($model->tags, 'id');
 
+        if ($model->load(Yii::$app->request->post())) {
+            // Yangilanishda user_id ni o'zgartirmasligingiz mumkin, yoki xohlasangiz o'zgartirish.
+            // $model->user_id = Yii::$app->user->isGuest ? 1 : Yii::$app->user->id;
+
+            // Agar slug bo'sh bo'lsa va sarlavha mavjud bo'lsa, yangi slug yaratamiz.
             if (empty($model->slug) && !empty($model->title)) {
-                $model->slug = \yii\helpers\Inflector::slug($model->title);
+                $model->slug = Inflector::slug($model->title);
             }
 
+            // Teglar uchun kelgan qiymatlarni saqlab turamiz.
+            $selectedTags = $model->tags;
+
             if ($model->validate() && $model->save()) {
+                // Post saqlangandan keyin rasmlarni yangilaymiz va teglarni bog'laymiz.
                 $this->saveImages($model);
-                Yii::$app->session->setFlash('success', 'Post yangilandi!');
-                Logs::add('post-update', 'Post yangilandi: ' . $model->title, 'update');
+                $this->syncTags($model, $selectedTags); // Yangi funksiya orqali teglarni yangilash
+
+                Yii::$app->session->setFlash('success', 'Post muvaffaqiyatli yangilandi!');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
 
-        return $this->render('update', ['model' => $model]);
+        $allTags = Tag::find()->all();
+
+        return $this->render('update', [
+            'model' => $model,
+            'allTags' => $allTags,
+        ]);
     }
 
+    /**
+     * Post uchun rasmlarni saqlash funksiyasi.
+     *
+     * @param Posts $model
+     */
     protected function saveImages($model)
     {
         $images = UploadedFile::getInstances($model, 'images');
+        // Rasmlar saqlanadigan yo'l
         $uploadDir = Yii::getAlias('@frontend/web/uploads/posts/');
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0775, true);
@@ -123,6 +156,26 @@ class PostsController extends AdminController
                 $imageModel->post_id = $model->id;
                 $imageModel->image = $fileName;
                 $imageModel->save();
+            }
+        }
+    }
+
+    /**
+     * Post va teglar o'rtasidagi bog'liqlikni yangilash funksiyasi.
+     *
+     * @param Posts $model Post modeli
+     * @param array $tagIds Tanlangan teglar ID'lari
+     */
+    protected function syncTags($model, $tagIds)
+    {
+        // Avval postga tegishli barcha teglarni o'chirib tashlaymiz
+        $model->unlinkAll('tags', true);
+
+        // Yangi tanlangan teglarni bog'laymiz
+        if (is_array($tagIds) && !empty($tagIds)) {
+            $existingTags = Tag::find()->where(['id' => $tagIds])->all();
+            foreach ($existingTags as $tag) {
+                $model->link('tags', $tag);
             }
         }
     }

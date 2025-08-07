@@ -3,10 +3,14 @@
 use kartik\file\FileInput;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\select2\Select2; // << Shu qator qo'shildi
+use yii\helpers\ArrayHelper; // << Shu qator qo'shildi
+use dosamigos\ckeditor\CKEditor; // << Agar wordeditor ishlatmoqchi bo'lsangiz
 
 /** @var yii\web\View $this */
 /** @var common\models\Posts $model */
 /** @var yii\widgets\ActiveForm $form */
+/** @var common\models\Tag[] $allTags */ // << Bu qator qo'shildi
 ?>
 
 <div class="posts-form">
@@ -28,10 +32,9 @@ use yii\widgets\ActiveForm;
         <label class="form-label fw-semibold">
             Kontent
         </label>
-        <?= $form->field($model, 'content', ['template' => '{input}{error}'])->textarea([
-            'class' => 'form-control form-control-solid',
-            'rows' => 6,
-            'placeholder' => 'Yangilik matni...',
+        <?= $form->field($model, 'content', ['template' => '{input}{error}'])->widget(CKEditor::class, [
+            'options' => ['rows' => 6, 'placeholder' => 'Yangilik matni...'],
+            'preset' => 'full',
         ]) ?>
     </div>
 
@@ -56,6 +59,24 @@ use yii\widgets\ActiveForm;
                 'browseClass' => 'btn btn-light-primary fw-semibold',
                 'cancelClass' => 'btn btn-light-info fw-semibold',
                 'removeClass' => 'btn btn-light-danger fw-semibold',
+            ],
+        ]) ?>
+    </div>
+
+    <div class="fv-row mb-3">
+        <label class="form-label fw-semibold">
+            Teglar
+        </label>
+        <?= $form->field($model, 'tags', ['template' => '{input}{error}'])->widget(Select2::class, [
+            'data' => ArrayHelper::map($allTags, 'id', 'name'),
+            'options' => [
+                'placeholder' => 'Teglarni tanlang yoki yangisini yozing...',
+                'multiple' => true,
+            ],
+            'pluginOptions' => [
+                'tags' => true,
+                'tokenSeparators' => [',', ' '],
+                'maximumInputLength' => 20,
             ],
         ]) ?>
     </div>

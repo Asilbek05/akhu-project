@@ -8,6 +8,7 @@ use common\models\PostImages;
 use common\models\Posts;
 use common\models\PostsSearch;
 
+use common\models\PostsTag;
 use common\models\Tag;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -61,24 +62,23 @@ class PostsController extends AdminController
         $model = new Posts(['scenario' => 'create']);
 
         if ($model->load(Yii::$app->request->post())) {
-            // Agar postni yaratayotgan bo'lsa, user_id va slug'ni avtomatik to'ldiramiz.
+            // user_id va slug
             $model->user_id = Yii::$app->user->isGuest ? 1 : Yii::$app->user->id;
             $model->slug = Inflector::slug($model->title);
 
-            // Teglar uchun kelgan qiymatlarni saqlab turamiz, chunki model->save() dan keyin ular o'chiriladi.
-            $selectedTags = $model->tags;
+            // Tanlangan yoki yangi yozilgan tag nomlarini saqlab qolamiz
+            $selectedTags = $model->tagNames; // Select2 input name = tagNames bo'lishi kerak
 
-            if ($model->validate() && $model->save()) {
-                // Post saqlangandan keyin rasmlarni saqlaymiz va teglar bilan bog'laymiz.
+            if ($model->validate() && $model->save(false)) {
                 $this->saveImages($model);
-                $this->syncTags($model, $selectedTags); // Yangi funksiya orqali teglarni saqlash
+                $this->syncTags($model, $selectedTags);
 
                 Yii::$app->session->setFlash('success', 'Post muvaffaqiyatli yaratildi!');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
 
-        $allTags = Tag::find()->all();
+        $allTags = Tag::find()->select('name')->column();
 
         return $this->render('create', [
             'model' => $model,
@@ -86,13 +86,6 @@ class PostsController extends AdminController
         ]);
     }
 
-    /**
-     * Mavjud postni yangilash sahifasi.
-     *
-     * @param int $id Post ID'si
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException Agar post topilmasa
-     */
     public function actionUpdate($id)
     {
         $model = Posts::findOne($id);
@@ -101,38 +94,62 @@ class PostsController extends AdminController
         }
 
         $model->scenario = 'update';
-
-        // Formaga mavjud teglarni yuklab berish uchun ID'larini ajratib olamiz.
-        $model->tags = ArrayHelper::getColumn($model->tags, 'id');
+        // Formaga mavjud teglarni yuklab berish
+        $model->tagNames = $model->getTags()->select('name')->column();
 
         if ($model->load(Yii::$app->request->post())) {
-            // Yangilanishda user_id ni o'zgartirmasligingiz mumkin, yoki xohlasangiz o'zgartirish.
-            // $model->user_id = Yii::$app->user->isGuest ? 1 : Yii::$app->user->id;
-
-            // Agar slug bo'sh bo'lsa va sarlavha mavjud bo'lsa, yangi slug yaratamiz.
             if (empty($model->slug) && !empty($model->title)) {
                 $model->slug = Inflector::slug($model->title);
             }
 
-            // Teglar uchun kelgan qiymatlarni saqlab turamiz.
-            $selectedTags = $model->tags;
+            $selectedTags = $model->tagNames;
 
-            if ($model->validate() && $model->save()) {
-                // Post saqlangandan keyin rasmlarni yangilaymiz va teglarni bog'laymiz.
+            if ($model->validate() && $model->save(false)) {
                 $this->saveImages($model);
-                $this->syncTags($model, $selectedTags); // Yangi funksiya orqali teglarni yangilash
+                $this->syncTags($model, $selectedTags);
 
                 Yii::$app->session->setFlash('success', 'Post muvaffaqiyatli yangilandi!');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
 
-        $allTags = Tag::find()->all();
+        $allTags = Tag::find()->select('name')->column();
 
         return $this->render('update', [
             'model' => $model,
             'allTags' => $allTags,
         ]);
+    }
+
+    protected function syncTags(Posts $model, $tags)
+    {
+        if (!is_array($tags)) {
+            $tags = [];
+        }
+
+        // Eski bog'lanishlarni o'chiramiz
+        PostsTag::deleteAll(['posts_id' => $model->id]);
+
+        foreach ($tags as $tagName) {
+            $tagName = trim($tagName);
+            if ($tagName === '') {
+                continue;
+            }
+
+            // Tag mavjudligini tekshiramiz
+            $tag = Tag::findOne(['name' => $tagName]);
+            if (!$tag) {
+                $tag = new Tag();
+                $tag->name = $tagName;
+                $tag->save(false);
+            }
+
+            // posts_tag jadvaliga yozamiz
+            $postTag = new PostsTag();
+            $postTag->posts_id = $model->id; // sizdagi ustun nomi
+            $postTag->tag_id = $tag->id;
+            $postTag->save(false);
+        }
     }
 
     /**
@@ -165,16 +182,7 @@ class PostsController extends AdminController
      * @param Posts $model Post modeli
      * @param array $tagIds Tanlangan teglar ID'lari
      */
-    protected function syncTags($model, $tagIds)
-    {
-        $model->unlinkAll('tags', true);
-        if (is_array($tagIds) && !empty($tagIds)) {
-            $existingTags = Tag::find()->where(['id' => $tagIds])->all();
-            foreach ($existingTags as $tag) {
-                $model->link('tags', $tag);
-            }
-        }
-    }
+
 
     /**
      * Deletes an existing Posts model.

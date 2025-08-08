@@ -32,10 +32,13 @@ class Tag extends ActiveRecord
         return [
             [
                 'class' => TimestampBehavior::class,
-                'value' => new Expression('NOW()'),
+                'createdAtAttribute' => 'created_at', // faqat created_at ishlaydi
+                'updatedAtAttribute' => false,        // updated_at ishlatilmaydi
+                'value' => new Expression('NOW()'),   // DATETIME format
             ],
         ];
     }
+
 
     /**
      * {@inheritdoc}

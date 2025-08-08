@@ -26,7 +26,7 @@ use yii\helpers\Inflector;
 class Posts extends \yii\db\ActiveRecord
 {
     public $images;
-    public $tags_array;
+    public $tagNames;
     /**
      * {@inheritdoc}
      */
@@ -52,8 +52,8 @@ class Posts extends \yii\db\ActiveRecord
     {
         $scenarios = parent::scenarios();
 
-        $scenarios['create'] = ['title', 'content', 'slug', 'images', 'user_id', 'tags_array', 'is_published'];
-        $scenarios['update'] = ['title', 'content', 'slug', 'images', 'user_id', 'tags_array', 'is_published'];
+        $scenarios['create'] = ['title', 'content', 'slug', 'images', 'user_id', 'tagNames',  'is_published'];
+        $scenarios['update'] = ['title', 'content', 'slug', 'images', 'user_id','tagNames', 'is_published'];
 
         return $scenarios;
     }
@@ -66,7 +66,7 @@ class Posts extends \yii\db\ActiveRecord
             [['user_id', 'title', 'slug'], 'required'],
             [['user_id'], 'integer'],
             [['content'], 'string'],
-            ['tags_array', 'safe'],
+            [['tagNames'], 'safe', 'on' => ['create', 'update']],
             [['created_at', 'updated_at'], 'safe'],
             [['title', 'slug'], 'string', 'max' => 255],
             ['images', 'required', 'on' => 'create'],
@@ -166,62 +166,30 @@ class Posts extends \yii\db\ActiveRecord
             ->viaTable('{{%posts_tag}}', ['posts_id' => 'id']);
     }
 
-    public function afterFind()
-    {
-        parent::afterFind();
-        $this->tags_array = $this->getTags()->select('name')->column();
-    }
 
-    public function beforeSave($insert)
-    {
-        if (!parent::beforeSave($insert)) {
-            return false;
-        }
-
-        if ($this->isNewRecord || $this->isAttributeChanged('title')) {
-            $this->slug = Inflector::slug($this->title);
-        }
-
-        if (Yii::$app->user && Yii::$app->user->id) {
-            $this->user_id = Yii::$app->user->id;
-        }
-
-        return true;
-    }
 
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
 
-        if ($this->tags_array !== null) {
-            $this->saveTags($this->tags_array);
-        }
-    }
+        if (in_array($this->scenario, ['create', 'update'])) {
+            if (is_array($this->tagNames)) {
+                PostsTag::deleteAll(['posts_id' => $this->id]);
 
-    private function saveTags($tags)
-    {
-        $this->unlinkAll('tags', true);
-
-        if (is_array($tags)) {
-            foreach ($tags as $tagName) {
-                $tagName = trim($tagName);
-                if (empty($tagName)) {
-                    continue;
-                }
-
-                $tag = Tag::findOne(['name' => $tagName]);
-
-                if (!$tag) {
-                    $tag = new Tag();
-                    $tag->name = $tagName;
-                    $tag->slug = Inflector::slug($tagName);
-
-                    if (!$tag->save()) {
-                        Yii::error('Yangi teg saqlashda xato: ' . json_encode($tag->errors), 'posts.afterSave');
-                        throw new \Exception('Yangi teg saqlashda xato: ' . json_encode($tag->errors));
+                foreach ($this->tagNames as $tagName) {
+                    $tag = Tag::findOne(['name' => $tagName]);
+                    if (!$tag) {
+                        $tag = new Tag();
+                        $tag->name = $tagName;
+                        $tag->save(false);
                     }
+
+                    // PostsTag jadvaliga yozamiz
+                    $postTag = new PostsTag();
+                    $postTag->posts_id = $this->id;
+                    $postTag->tag_id = $tag->id;
+                    $postTag->save(false);
                 }
-                $this->link('tags', $tag);
             }
         }
     }

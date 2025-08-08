@@ -15,17 +15,23 @@ class PostsController extends Controller
      * Postlar ro'yxatini aks ettiradi.
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($tag = null)
     {
-        $posts = Posts::find()
+        $query = Posts::find()
             ->with('tags')
             ->where(['is_published' => true])
-            ->orderBy(['created_at' => SORT_DESC])
-            ->all();
+            ->orderBy(['created_at' => SORT_DESC]);
 
+        if ($tag) {
+            $query->joinWith('tags')
+                ->andWhere(['tag.slug' => $tag]);
+        }
+
+        $posts = $query->all();
 
         return $this->render('index', [
             'posts' => $posts,
+            'selectedTag' => $tag,
         ]);
     }
 

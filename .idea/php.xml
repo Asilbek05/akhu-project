@@ -133,6 +133,8 @@
       <path value="$PROJECT_DIR$/vendor/2amigos/yii2-ckeditor-widget" />
       <path value="$PROJECT_DIR$/vendor/sunhater/kcfinder" />
       <path value="$PROJECT_DIR$/vendor/ckeditor/ckeditor" />
+      <path value="$PROJECT_DIR$/vendor/himiklab/yii2-recaptcha-widget" />
+      <path value="$PROJECT_DIR$/vendor/yiisoft/yii2-httpclient" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4">

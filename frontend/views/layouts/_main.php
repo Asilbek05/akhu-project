@@ -70,52 +70,57 @@ $location = $settings->location ?? 'Location not set';
                 <div class="container">
                     <div class="header__wrap ul_li_between">
                         <div class="header-logo">
-                            <a href="#"><img src="<?= Yii::getAlias('@web/img/logo/logo-dark.png') ?>" alt="" width="85"></a>
+                            <a href="<?= \yii\helpers\Url::to(['/site/index']) ?>"><img src="<?= Yii::getAlias('@web/img/logo/logo-dark.png') ?>" alt="" width="85"></a>
                         </div>
                         <div class="main-menu__wrap ul_li navbar navbar-expand-lg">
                             <nav class="main-menu collapse navbar-collapse">
                                 <ul>
                                     <li class="menu-item-has-children">
-                                        <a href="#">About</a>
+                                        <a href="<?= \yii\helpers\Url::to(['/site/about']) ?>">About</a>
                                         <ul class="submenu">
-                                            <li><a href="#">About Us</a></li>
-                                            <li><a href="#">Vision & Mision</a></li>
-                                            <li><a href="#">Presidential Decree</a></li>
-                                            <li><a href="#">Leadership</a></li>
-                                            <li><a href="#">Governance & Partners</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/about']) ?>">About Us</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/vision']) ?>">Vision & Mision</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/decree']) ?>">Presidential Decree</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/leadership']) ?>">Leadership</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/partners']) ?>">Governance & Partners</a></li>
                                         </ul>
                                     </li>
+
                                     <li class="menu-item-has-children">
-                                        <a href="#">Programs</a>
+                                        <a href="<?= \yii\helpers\Url::to(['/site/programs']) ?>">Programs</a>
                                         <ul class="submenu">
-                                            <li><a href="#">Undergraduate</a></li>
-                                            <li><a href="#">Specialized STEM School</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/undergraduate']) ?>">Undergraduate</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/stem']) ?>">Specialized STEM School</a></li>
                                         </ul>
                                     </li>
+
                                     <li class="menu-item-has-children">
-                                        <a href="#">Admissions</a>
+                                        <a href="<?= \yii\helpers\Url::to(['/site/admissions']) ?>">Admissions</a>
                                         <ul class="submenu">
-                                            <li><a href="#">Admission Overview</a></li>
-                                            <li><a href="#">Tuition Fees & Scholarships</a></li>
-                                            <li><a href="#">Calculator</a></li>
-                                            <li><a href="#">Apply Now</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/admissions']) ?>">Admission Overview</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/fees']) ?>">Tuition Fees & Scholarships</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/calculator']) ?>">Calculator</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/application/create']) ?>">Apply Now</a></li>
                                         </ul>
                                     </li>
+
                                     <li class="menu-item-has-children">
-                                        <a href="#">Campus</a>
+                                        <a href="<?= \yii\helpers\Url::to(['/site/campus']) ?>">Campus</a>
                                         <ul class="submenu">
-                                            <li><a href="#">Location & Facilities</a></li>
-                                            <li><a href="#">Student Life</a></li>
-                                            <li><a href="#">Future Campus Plan</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/location']) ?>">Location & Facilities</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/student-life']) ?>">Student Life</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/site/future-campus']) ?>">Future Campus Plan</a></li>
                                         </ul>
+                                    </li>
+
+                                    <li>
+                                        <a href="<?= \yii\helpers\Url::to(['/posts']) ?>">News & Events</a>
                                     </li>
                                     <li>
-                                        <a href="admission.html">News & Events</a>
-                                    </li>
-                                    <li>
-                                        <a href="contact.html">Contact us</a>
+                                        <a href="<?= \yii\helpers\Url::to(['/contact']) ?>">Contact us</a>
                                     </li>
                                 </ul>
+
                             </nav>
                             <div class="xb-header-wrap">
                                 <div class="xb-header-menu">

@@ -78,4 +78,23 @@ class ContactController extends Controller
 
         return '';
     }
+    public function beforeAction($action)
+{
+    if (Yii::$app->request->isPost) {
+        $ip = Yii::$app->request->userIP;
+        $cache = Yii::$app->cache;
+
+        $key = 'contact_attempts_' . $ip;
+        $attempts = $cache->get($key) ?: 0;
+
+        if ($attempts >= 5) {
+            Yii::$app->session->setFlash('error', 'Too many attempts, please try again later.');
+            return $this->redirect(Yii::$app->request->referrer ?: ['/']);
+        }
+
+        $cache->set($key, $attempts + 1, 60);
+    }
+
+    return parent::beforeAction($action);
+}
 }

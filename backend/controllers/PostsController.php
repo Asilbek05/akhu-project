@@ -143,7 +143,6 @@ class PostsController extends AdminController
     protected function saveImages($model)
     {
         $images = UploadedFile::getInstances($model, 'images');
-        // Rasmlar saqlanadigan yo'l
         $uploadDir = Yii::getAlias('@frontend/web/uploads/posts/');
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0775, true);
@@ -168,10 +167,7 @@ class PostsController extends AdminController
      */
     protected function syncTags($model, $tagIds)
     {
-        // Avval postga tegishli barcha teglarni o'chirib tashlaymiz
         $model->unlinkAll('tags', true);
-
-        // Yangi tanlangan teglarni bog'laymiz
         if (is_array($tagIds) && !empty($tagIds)) {
             $existingTags = Tag::find()->where(['id' => $tagIds])->all();
             foreach ($existingTags as $tag) {
@@ -179,8 +175,6 @@ class PostsController extends AdminController
             }
         }
     }
-
-
 
     /**
      * Deletes an existing Posts model.

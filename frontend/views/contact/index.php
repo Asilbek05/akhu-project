@@ -69,6 +69,10 @@ $location = $settings->location ?? '195, Abdulg’oziy Bahodirxon (Tarraqqiyot) 
                                 <div class="col-12">
                                     <?= $form->field($model, 'message')->textarea(['placeholder' => 'How can we help you?', 'class' => 'form-control', 'id' => 'input_textarea', 'rows' => 6])->label('Message', ['class' => 'input_title']) ?>
                                 </div>
+                                <?= $form->field($model, 'reCaptcha')->widget(
+                                        \himiklab\yii2\recaptcha\ReCaptcha2::className(),
+                                        ['siteKey' => '6LccpZ4rAAAAACilRJ5TvzOeTto73htaXKCLcDib']
+                                ) ?>
                                 <div class="col-12 mt-3">
                                     <?= Html::submitButton('Send Message <span class="icon">
                                     <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">

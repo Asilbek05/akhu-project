@@ -29,6 +29,7 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
         'y' => 
         array (
             'yii\\symfonymailer\\' => 18,
+            'yii\\httpclient\\' => 15,
             'yii\\gii\\' => 8,
             'yii\\faker\\' => 10,
             'yii\\debug\\' => 10,
@@ -61,6 +62,11 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
             'kartik\\daterange\\' => 17,
             'kartik\\date\\' => 12,
             'kartik\\base\\' => 12,
+        ),
+        'h' => 
+        array (
+            'himiklab\\yii2\\recaptcha\\tests\\' => 30,
+            'himiklab\\yii2\\recaptcha\\' => 24,
         ),
         'f' => 
         array (
@@ -160,6 +166,10 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
         array (
             0 => __DIR__ . '/..' . '/yiisoft/yii2-symfonymailer/src',
         ),
+        'yii\\httpclient\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/yiisoft/yii2-httpclient/src',
+        ),
         'yii\\gii\\' => 
         array (
             0 => __DIR__ . '/..' . '/yiisoft/yii2-gii/src',
@@ -251,6 +261,14 @@ class ComposerStaticInitd518d6f837cce6905220f5864c0d95ea
         'kartik\\base\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-krajee-base/src',
+        ),
+        'himiklab\\yii2\\recaptcha\\tests\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/himiklab/yii2-recaptcha-widget/tests',
+        ),
+        'himiklab\\yii2\\recaptcha\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/himiklab/yii2-recaptcha-widget/src',
         ),
         'frontend\\tests\\' => 
         array (

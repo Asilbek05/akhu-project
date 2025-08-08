@@ -18,10 +18,11 @@ class PostsController extends Controller
     public function actionIndex()
     {
         $posts = Posts::find()
-            ->with('tags') // Tug'ridan-to'g'ri teglar bilan birga postlarni oladi
+            ->with('tags')
             ->where(['is_published' => true])
             ->orderBy(['created_at' => SORT_DESC])
             ->all();
+
 
         return $this->render('index', [
             'posts' => $posts,

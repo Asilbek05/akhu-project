@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use himiklab\yii2\recaptcha\ReCaptchaValidator2;
 use Yii;
 
 /**
@@ -19,6 +20,7 @@ class ApplicationRequests extends \yii\db\ActiveRecord
 
     const STATUS_PENDING = 0;
     const STATUS_REVIEWED = 1;
+    public $reCaptcha;
     /**
      * {@inheritdoc}
      */
@@ -43,6 +45,10 @@ class ApplicationRequests extends \yii\db\ActiveRecord
             [['code'], 'string', 'max' => 32],
             ['email', 'email'],
             ['code', 'unique'],
+            [['reCaptcha'], ReCaptchaValidator2::className(),
+                'secret' => '6LccpZ4rAAAAAPnG8tdE5JMAODhKTRxqaJN5bk64',
+                'uncheckedMessage' => 'Please confirm that you are not a bot.'
+            ],
         ];
     }
 

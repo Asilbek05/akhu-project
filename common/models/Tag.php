@@ -3,7 +3,9 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 use yii\helpers\Inflector;
 
 /**
@@ -24,6 +26,15 @@ class Tag extends ActiveRecord
     public static function tableName()
     {
         return 'tag';
+    }
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                'value' => new Expression('NOW()'),
+            ],
+        ];
     }
 
     /**

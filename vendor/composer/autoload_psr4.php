@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'yii\\symfonymailer\\' => array($vendorDir . '/yiisoft/yii2-symfonymailer/src'),
+    'yii\\httpclient\\' => array($vendorDir . '/yiisoft/yii2-httpclient/src'),
     'yii\\gii\\' => array($vendorDir . '/yiisoft/yii2-gii/src'),
     'yii\\faker\\' => array($vendorDir . '/yiisoft/yii2-faker/src'),
     'yii\\debug\\' => array($vendorDir . '/yiisoft/yii2-debug/src'),
@@ -30,6 +31,8 @@ return array(
     'kartik\\daterange\\' => array($vendorDir . '/kartik-v/yii2-date-range/src'),
     'kartik\\date\\' => array($vendorDir . '/kartik-v/yii2-widget-datepicker/src'),
     'kartik\\base\\' => array($vendorDir . '/kartik-v/yii2-krajee-base/src'),
+    'himiklab\\yii2\\recaptcha\\tests\\' => array($vendorDir . '/himiklab/yii2-recaptcha-widget/tests'),
+    'himiklab\\yii2\\recaptcha\\' => array($vendorDir . '/himiklab/yii2-recaptcha-widget/src'),
     'frontend\\tests\\' => array($baseDir . '/frontend/tests', $baseDir . '/frontend/tests/_support'),
     'dosamigos\\ckeditor\\' => array($vendorDir . '/2amigos/yii2-ckeditor-widget/src'),
     'common\\tests\\' => array($baseDir . '/common/tests', $baseDir . '/common/tests/_support'),

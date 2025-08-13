@@ -22,7 +22,7 @@ class ContactController extends Controller
 
         if ($this->request->isPost && $model->load($this->request->post())) {
             $model->code = Yii::$app->security->generateRandomString(5);
-            $model->status = 0; // Status 0 (pending) is set for a new request.
+            $model->status = 0;
 
             if ($model->save()) {
                 Yii::$app->mailer->compose()

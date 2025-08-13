@@ -76,20 +76,30 @@ class UserController extends Controller
     {
         $model = $this->findModel($id);
         $model->scenario = 'update';
+
         if ($model->role === 'superadmin' && Yii::$app->user->identity->role !== 'superadmin') {
             throw new \yii\web\ForbiddenHttpException('Siz superadminni o‘zgartira olmaysiz.');
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Logs::add('user-update', 'User tahrirlandi: ' . $model->username, 'update');
+        if ($model->load(Yii::$app->request->post())) {
+            if (!empty($model->password)) {
+                $model->password_hash = Yii::$app->security->generatePasswordHash($model->password);
+            }
 
-            return $this->redirect(['index']);
+            $model->updated_at = time();
+
+            if ($model->save(false)) { // validatsiyani oldin bajargan bo‘lsak, false qo‘yish mumkin
+                Logs::add('user-update', 'User tahrirlandi: ' . $model->username, 'update');
+                Yii::$app->session->setFlash('success', 'Foydalanuvchi muvaffaqiyatli tahrirlandi.');
+
+                return $this->redirect(['index']);
+            }
         }
-
         return $this->render('update', [
             'model' => $model,
         ]);
     }
+
     public function actionLoadUpdateForm($id)
     {
         $model = $this->findModel($id);

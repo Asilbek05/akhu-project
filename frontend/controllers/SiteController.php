@@ -53,6 +53,13 @@ class SiteController extends Controller
             ],
         ];
     }
+    public function beforeAction($action)
+    {
+        if ($action->id === 'error') {
+            $this->layout = 'blank';
+        }
+        return parent::beforeAction($action);
+    }
 
     /**
      * {@inheritdoc}

@@ -49,7 +49,14 @@ class User extends ActiveRecord implements IdentityInterface
             TimestampBehavior::class,
         ];
     }
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+        $scenarios['create'] = ['username', 'email', 'password', 'role'];
+        $scenarios['update'] = ['username', 'email', 'role','password'];
 
+        return $scenarios;
+    }
     /**
      * {@inheritdoc}
      */
@@ -58,6 +65,9 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             [['username', 'email', 'role', 'password'], 'required'],
             ['email', 'email'],
+            [['password'], 'safe', 'on' => 'update'],
+            [['username', 'email', 'role', 'password'], 'required', 'on' => 'create'],
+            ['email', 'unique'],
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
         ];
@@ -213,5 +223,15 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if (!empty($this->password)) {
+                $this->password = Yii::$app->security->generatePasswordHash($this->password);
+            }
+            return true;
+        }
+        return false;
     }
 }

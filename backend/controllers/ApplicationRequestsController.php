@@ -2,26 +2,19 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
+use common\models\ApplicationReplies;
+use Exception;
 use Yii;
 use common\models\ApplicationRequests;
 use common\models\ApplicationRequestsSearch;
-use yii\web\Controller;
+use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
-class ApplicationRequestsController extends Controller
+class ApplicationRequestsController extends AdminController
 {
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'set-status' => ['POST'],
-                ],
-            ],
-        ];
-    }
 
     public function actionIndex()
     {
@@ -40,9 +33,9 @@ class ApplicationRequestsController extends Controller
             $baseQuery->andWhere(['like', 'phone', $phoneFilter]);
         }
 
-        $Count = (clone $baseQuery)->count();
-        $viewCount = (clone $baseQuery)->andWhere(['status' => 1])->count();
-        $noviewCount = (clone $baseQuery)->andWhere(['status' => 0])->count();
+        $Count = 12; //(clone $baseQuery)->count();
+        $viewCount =11; // (clone $baseQuery)->andWhere(['status' => 1])->count();
+        $noviewCount = 13; // (clone $baseQuery)->andWhere(['status' => 0])->count();
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -54,26 +47,74 @@ class ApplicationRequestsController extends Controller
     }
     public function actionSetStatus()
     {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
         $id = Yii::$app->request->post('id');
-        $status = Yii::$app->request->post('status');
+        $replyMessage = Yii::$app->request->post('reply_message');
+        $status = 1;
 
-        if (!$id || $status === null) {
-            return ['success' => false, 'message' => 'ID yoki status yuborilmadi'];
+        $userId = Yii::$app->user->identity->id ?? null;
+
+        if (!$id || !$replyMessage) {
+            return ['success' => false, 'message' => 'ID or reply message was not sent'];
         }
 
-        $model = ApplicationRequests::findOne($id);
-        if (!$model) {
-            return ['success' => false, 'message' => 'Xabar topilmadi'];
+        if (!$userId) {
+            return ['success' => false, 'message' => 'User is not authorized'];
         }
 
-        $model->status = (int)$status;
-        if ($model->save(false)) {
+        $transaction = Yii::$app->db->beginTransaction();
+
+        try {
+            $requestModel = ApplicationRequests::findOne($id);
+            if (!$requestModel) {
+                throw new Exception('Message not found.');
+            }
+
+            $replyModel = ApplicationReplies::findOne(['request_id' => $id]);
+            if (!$replyModel) {
+                $replyModel = new ApplicationReplies();
+                $replyModel->request_id = $id;
+            }
+
+            $replyModel->user_id = $userId;
+            $replyModel->reply_message = $replyMessage;
+
+            if (!$replyModel->save()) {
+                $errors = json_encode($replyModel->getErrors());
+                throw new Exception("Error saving reply: " . $errors);
+            }
+
+            $requestModel->status = $status;
+            if (!$requestModel->save(false)) {
+                $errors = json_encode($requestModel->getErrors());
+                throw new Exception("Error saving message status: " . $errors);
+            }
+
+            // --- THIS PART IS NEW ---
+            // Send email to the customer
+            if (!empty($requestModel->email)) {
+                $subject = "Response to your request";
+
+                Yii::$app->mailer->compose('reply', [
+                    'request' => $requestModel,
+                    'replyMessage' => $replyMessage,
+                ])
+                    ->setFrom([Yii::$app->params['senderEmail'] => Yii::$app->name])
+                    ->setTo($requestModel->email)
+                    ->setSubject($subject)
+                    ->send();
+            }
+            $transaction->commit();
             return ['success' => true];
-        }
 
-        return ['success' => false, 'message' => 'Saqlashda xato'];
+        } catch (Exception $e) {
+            $transaction->rollBack();
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
     }
+
+
+
 
 }

@@ -2,6 +2,9 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
+use common\models\Logs;
+use common\models\LogsSearch;
 use common\models\Slider;
 use common\models\SliderSearch;
 use Yii;
@@ -14,25 +17,8 @@ use yii\web\UploadedFile;
 /**
  * SliderController implements the CRUD actions for Slider model.
  */
-class SliderController extends Controller
+class SliderController extends AdminController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
 
     /**
      * Lists all Slider models.
@@ -42,13 +28,15 @@ class SliderController extends Controller
     public function actionIndex()
     {
         $searchModel = new SliderSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
+
+
 
     /**
      * Displays a single Slider model.
@@ -74,35 +62,47 @@ class SliderController extends Controller
     {
         $model = new Slider();
 
-        if ($model->load(Yii::$app->request->post())) {
-            $file = UploadedFile::getInstance($model, 'background_image_file');
+        try {
+            if ($model->load(Yii::$app->request->post())) {
+                $file = UploadedFile::getInstance($model, 'background_image_file');
 
-            if ($file) {
-                $dir = Yii::getAlias('@frontend/web/uploads/sliders/');
-                if (!is_dir($dir)) {
-                    mkdir($dir, 0777, true);
+                if ($file) {
+                    $dir = Yii::getAlias('@frontend/web/uploads/sliders/');
+                    if (!is_dir($dir)) {
+                        mkdir($dir, 0777, true);
+                    }
+
+                    $fileName = uniqid() . '.' . $file->extension;
+                    if ($file->saveAs($dir . $fileName)) {
+                        $model->background_image = '/uploads/sliders/' . $fileName;
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Rasm yuklanmadi. Iltimos, qayta urinib ko‘ring.');
+                        Logs::add('slider_create_error', 'Rasmni saqlashda xato yuz berdi', 'error');
+                        return $this->redirect(['index']);
+                    }
                 }
 
-                $fileName = uniqid() . '.' . $file->extension;
-                if ($file->saveAs($dir . $fileName)) {
-                    $model->background_image = '/uploads/sliders/' . $fileName;
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', 'Slayder muvaffaqiyatli yaratildi.');
+                    Logs::add('slider_create', 'Slider yaratildi: ' . $model->name, 'create');
+                    return $this->redirect(['view', 'id' => $model->id]);
                 } else {
-                    Yii::$app->session->setFlash('error', 'Rasm yuklanmadi. Iltimos, qayta urinib ko‘ring.');
+                    Yii::$app->session->setFlash('error', 'Xatolik yuz berdi. Maʼlumotlar saqlanmadi.');
+                    Logs::add('slider_create_error', 'Modelni saqlashda validatsiya xatosi: ' . json_encode($model->errors), 'error');
+                    return $this->redirect(['index']);
                 }
             }
-
-            if ($model->save()) {
-                Yii::$app->session->setFlash('success', 'Slayder muvaffaqiyatli yaratildi.');
-                return $this->redirect(['view', 'id' => $model->id]);
-            } else {
-                Yii::$app->session->setFlash('error', 'Xatolik yuz berdi. Maʼlumotlar saqlanmadi.');
-            }
+        } catch (\Throwable $e) {
+            Yii::$app->session->setFlash('error', 'Nomaʼlum server xatosi: ' . $e->getMessage());
+            Logs::add('slider_create_error', 'Exception: ' . $e->getMessage(), 'error');
+            throw $e;
         }
 
         return $this->render('create', [
             'model' => $model,
         ]);
     }
+
 
 
 
@@ -154,6 +154,7 @@ class SliderController extends Controller
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Slayder muvaffaqiyatli yangilandi.');
+                Logs::add('slider-update', 'Slider yangilandi: ' . $model->name, 'update');
                 return $this->redirect(['view', 'id' => $model->id]);
             } else {
                 Yii::$app->session->setFlash('error', 'Xatolik yuz berdi. Maʼlumotlar yangilanmadi.');
@@ -177,7 +178,11 @@ class SliderController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $name = $model->name;
+        $model->delete();
+
+        Logs::add('slider-delete', "Slider o`chirildi: {$name}", 'delete');
 
         return $this->redirect(['index']);
     }

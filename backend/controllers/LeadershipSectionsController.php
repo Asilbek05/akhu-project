@@ -2,22 +2,20 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
 use common\models\Leadership;
 use common\models\LeadershipSections;
 use common\models\LeadershipSectionsSearch;
+use common\models\Logs;
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * LeadershipSectionsController implements the CRUD actions for LeadershipSections model.
  */
-class LeadershipSectionsController extends Controller
+class LeadershipSectionsController extends AdminController
 {
-    /**
-     * @inheritDoc
-     */
     public function behaviors()
     {
         return array_merge(
@@ -69,6 +67,7 @@ class LeadershipSectionsController extends Controller
         if (Yii::$app->request->isPost && $newSection->load(Yii::$app->request->post())) {
             if ($newSection->save()) {
                 Yii::$app->session->setFlash('success', 'Section added successfully.');
+                Logs::add('leader-section-create', 'Section o`chirildi: ' . $newSection->title, 'create');
                 return $this->redirect(['manage', 'leadership_id' => $leadership_id]);
             }
         }
@@ -135,7 +134,9 @@ class LeadershipSectionsController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $model->delete();
+        Logs::add('leader-section-delete', 'Section o`chirildi: ' . $model->title, 'create');
         return $this->redirect(['index']);
     }
     /**

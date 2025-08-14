@@ -1,13 +1,14 @@
 <?php
 namespace backend\controllers;
 
+use backend\components\AdminController;
+use common\models\Logs;
 use Yii;
 use common\models\Settings;
 use yii\web\BadRequestHttpException;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
-class SettingsController extends Controller
+class SettingsController extends AdminController
 {
     public function actionIndex()
     {
@@ -41,6 +42,7 @@ class SettingsController extends Controller
             }
             if ($model->save()) {
                 Yii::$app->session->setFlash('info', 'Updated successfully.');
+                Logs::add('settings-update', 'Settings yangilandi: ' , 'update');
                 return $this->redirect(['index']);
             }
         }

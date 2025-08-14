@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
+use yii\helpers\Inflector;
 
 /**
  * This is the model class for table "posts".
@@ -25,7 +26,7 @@ use yii\db\Expression;
 class Posts extends \yii\db\ActiveRecord
 {
     public $images;
-
+    public $tagNames;
     /**
      * {@inheritdoc}
      */
@@ -47,6 +48,15 @@ class Posts extends \yii\db\ActiveRecord
             ],
         ];
     }
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+
+        $scenarios['create'] = ['title', 'content', 'slug', 'images', 'user_id', 'tagNames',  'is_published'];
+        $scenarios['update'] = ['title', 'content', 'slug', 'images', 'user_id','tagNames', 'is_published'];
+
+        return $scenarios;
+    }
     public function rules()
     {
         return [
@@ -56,8 +66,10 @@ class Posts extends \yii\db\ActiveRecord
             [['user_id', 'title', 'slug'], 'required'],
             [['user_id'], 'integer'],
             [['content'], 'string'],
+            [['tagNames'], 'safe', 'on' => ['create', 'update']],
             [['created_at', 'updated_at'], 'safe'],
             [['title', 'slug'], 'string', 'max' => 255],
+            ['images', 'required', 'on' => 'create'],
             [['images'], 'file', 'extensions' => 'png, jpg, jpeg', 'maxFiles' => 10],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -77,6 +89,7 @@ class Posts extends \yii\db\ActiveRecord
             'is_published' => 'Is Published',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'tags_array' => 'Tags',
         ];
     }
 
@@ -99,6 +112,34 @@ class Posts extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+    public function getImagesUrls()
+    {
+        $images = PostImages::find()->where(['post_id' => $this->id])->all();
+        $urls = [];
+        foreach ($images as $img) {
+            $urls[] = Yii::$app->params['uploadBaseUrl'] . '/posts/' . $img->image;
+        }
+        return $urls;
+    }
+    public function getFirstImage()
+    {
+        return $this->hasOne(PostImages::class, ['post_id' => 'id'])->orderBy(['id' => SORT_ASC]);
+    }
+
+    public function getImagesPreviewConfig()
+    {
+        $images = PostImages::find()->where(['post_id' => $this->id])->all();
+        $config = [];
+        foreach ($images as $img) {
+            $config[] = [
+                'caption' => $img->image,
+                'key' => $img->id,
+                'url' => \yii\helpers\Url::to(['delete-image', 'id' => $img->id]),
+            ];
+        }
+        return $config;
+    }
+
 //
 //    public function beforeSave($insert)
 //    {
@@ -118,5 +159,39 @@ class Posts extends \yii\db\ActiveRecord
 //        }
 //        return false;
 //    }
+
+    public function getTags()
+    {
+        return $this->hasMany(Tag::class, ['id' => 'tag_id'])
+            ->viaTable('{{%posts_tag}}', ['posts_id' => 'id']);
+    }
+
+
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        if (in_array($this->scenario, ['create', 'update'])) {
+            if (is_array($this->tagNames)) {
+                PostsTag::deleteAll(['posts_id' => $this->id]);
+
+                foreach ($this->tagNames as $tagName) {
+                    $tag = Tag::findOne(['name' => $tagName]);
+                    if (!$tag) {
+                        $tag = new Tag();
+                        $tag->name = $tagName;
+                        $tag->save(false);
+                    }
+
+                    // PostsTag jadvaliga yozamiz
+                    $postTag = new PostsTag();
+                    $postTag->posts_id = $this->id;
+                    $postTag->tag_id = $tag->id;
+                    $postTag->save(false);
+                }
+            }
+        }
+    }
 
 }

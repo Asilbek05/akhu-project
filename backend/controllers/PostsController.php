@@ -2,12 +2,17 @@
 
 namespace backend\controllers;
 
+use backend\components\AdminController;
+use common\models\Logs;
 use common\models\PostImages;
 use common\models\Posts;
 use common\models\PostsSearch;
 
+use common\models\PostsTag;
+use common\models\Tag;
 use Yii;
-use yii\web\Controller;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
@@ -15,26 +20,8 @@ use yii\web\UploadedFile;
 /**
  * PostsController implements the CRUD actions for Posts model.
  */
-class PostsController extends Controller
+class PostsController extends AdminController
 {
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
-
     /**
      * Lists all Posts models.
      *
@@ -72,103 +59,129 @@ class PostsController extends Controller
 
     public function actionCreate()
     {
-        $model = new Posts();
+        $model = new Posts(['scenario' => 'create']);
 
         if ($model->load(Yii::$app->request->post())) {
+            // user_id va slug
             $model->user_id = Yii::$app->user->isGuest ? 1 : Yii::$app->user->id;
-            $model->slug = \yii\helpers\Inflector::slug($model->title);
+            $model->slug = Inflector::slug($model->title);
 
-            if ($model->save()) {
-                $images = UploadedFile::getInstances($model, 'images');
-                $uploadDir = Yii::getAlias('@frontend/web/uploads/posts/');
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0775, true);
-                }
+            // Tanlangan yoki yangi yozilgan tag nomlarini saqlab qolamiz
+            $selectedTags = $model->tagNames; // Select2 input name = tagNames bo'lishi kerak
 
-                foreach ($images as $img) {
-                    $fileName = time() . '_' . Yii::$app->security->generateRandomString(8) . '.' . $img->extension;
-                    $uploadPath = $uploadDir . $fileName;
+            if ($model->validate() && $model->save(false)) {
+                $this->saveImages($model);
+                $this->syncTags($model, $selectedTags);
 
-                    if ($img->saveAs($uploadPath)) {
-                        $imageModel = new PostImages();
-                        $imageModel->post_id = $model->id;
-                        $imageModel->image = $fileName;
-                        $imageModel->save();
-                    }
-                }
-
+                Yii::$app->session->setFlash('success', 'Post muvaffaqiyatli yaratildi!');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
 
+        $allTags = Tag::find()->select('name')->column();
+
         return $this->render('create', [
             'model' => $model,
+            'allTags' => $allTags,
         ]);
     }
 
-
-
-    /**
-     * Updates an existing Posts model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionUpdate($id)
     {
         $model = Posts::findOne($id);
         if (!$model) {
-            throw new NotFoundHttpException('Post not found.');
+            throw new NotFoundHttpException('Post topilmadi.');
         }
 
-        if ($model->load(Yii::$app->request->post())) {
-            $model->user_id = Yii::$app->user->isGuest ? 1 : Yii::$app->user->id;
+        $model->scenario = 'update';
+        // Formaga mavjud teglarni yuklab berish
+        $model->tagNames = $model->getTags()->select('name')->column();
 
+        if ($model->load(Yii::$app->request->post())) {
             if (empty($model->slug) && !empty($model->title)) {
-                $model->slug = \yii\helpers\Inflector::slug($model->title);
+                $model->slug = Inflector::slug($model->title);
             }
 
-            if ($model->save()) {
-                $images = UploadedFile::getInstances($model, 'images');
+            $selectedTags = $model->tagNames;
 
-                if (!empty($images)) {
-                    $oldImages = PostImages::find()->where(['post_id' => $model->id])->all();
-                    foreach ($oldImages as $oldImage) {
-                        $filePath = Yii::getAlias('@frontend/web/uploads/posts/') . $oldImage->image;
-                        if (file_exists($filePath)) {
-                            @unlink($filePath);
-                        }
-                    }
+            if ($model->validate() && $model->save(false)) {
+                $this->saveImages($model);
+                $this->syncTags($model, $selectedTags);
 
-                    PostImages::deleteAll(['post_id' => $model->id]);
-
-                    $uploadDir = Yii::getAlias('@frontend/web/uploads/posts/');
-                    if (!is_dir($uploadDir)) {
-                        mkdir($uploadDir, 0775, true);
-                    }
-
-                    foreach ($images as $img) {
-                        $fileName = time() . '_' . Yii::$app->security->generateRandomString(8) . '.' . $img->extension;
-                        $uploadPath = $uploadDir . $fileName;
-
-                        if ($img->saveAs($uploadPath)) {
-                            $imageModel = new PostImages();
-                            $imageModel->post_id = $model->id;
-                            $imageModel->image = $fileName;
-                            $imageModel->save();
-                        }
-                    }
-                }
-
+                Yii::$app->session->setFlash('success', 'Post muvaffaqiyatli yangilandi!');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
 
+        $allTags = Tag::find()->select('name')->column();
+
         return $this->render('update', [
             'model' => $model,
+            'allTags' => $allTags,
         ]);
     }
+
+    protected function syncTags(Posts $model, $tags)
+    {
+        if (!is_array($tags)) {
+            $tags = [];
+        }
+
+        // Eski bog'lanishlarni o'chiramiz
+        PostsTag::deleteAll(['posts_id' => $model->id]);
+
+        foreach ($tags as $tagName) {
+            $tagName = trim($tagName);
+            if ($tagName === '') {
+                continue;
+            }
+
+            // Tag mavjudligini tekshiramiz
+            $tag = Tag::findOne(['name' => $tagName]);
+            if (!$tag) {
+                $tag = new Tag();
+                $tag->name = $tagName;
+                $tag->save(false);
+            }
+
+            // posts_tag jadvaliga yozamiz
+            $postTag = new PostsTag();
+            $postTag->posts_id = $model->id; // sizdagi ustun nomi
+            $postTag->tag_id = $tag->id;
+            $postTag->save(false);
+        }
+    }
+
+    /**
+     * Post uchun rasmlarni saqlash funksiyasi.
+     *
+     * @param Posts $model
+     */
+    protected function saveImages($model)
+    {
+        $images = UploadedFile::getInstances($model, 'images');
+        $uploadDir = Yii::getAlias('@frontend/web/uploads/posts/');
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
+
+        foreach ($images as $img) {
+            $fileName = uniqid('post_') . '.' . $img->extension;
+            if ($img->saveAs($uploadDir . $fileName)) {
+                $imageModel = new PostImages();
+                $imageModel->post_id = $model->id;
+                $imageModel->image = $fileName;
+                $imageModel->save();
+            }
+        }
+    }
+
+    /**
+     * Post va teglar o'rtasidagi bog'liqlikni yangilash funksiyasi.
+     *
+     * @param Posts $model Post modeli
+     * @param array $tagIds Tanlangan teglar ID'lari
+     */
 
 
     /**
@@ -180,8 +193,9 @@ class PostsController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        $model = $this->findModel($id);
+        Logs::add('post-delete', 'Post o`chirildi: ' . $model->title, 'delete');
+        $model->delete();
         return $this->redirect(['index']);
     }
     public function actionToggleStatus($id)
@@ -218,5 +232,22 @@ class PostsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    public function actionDeleteImage($id)
+    {
+        $image = PostImages::findOne($id);
+        if (!$image) {
+            throw new NotFoundHttpException('Rasm topilmadi.');
+        }
+
+        $filePath = Yii::getAlias('@frontend/web/uploads/posts/') . $image->image;
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        $image->delete();
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return ['success' => true];
     }
 }

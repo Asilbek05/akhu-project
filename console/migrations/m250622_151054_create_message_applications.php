@@ -24,9 +24,7 @@ class m250622_151054_create_message_applications extends Migration
      */
     public function safeDown()
     {
-        echo "m250622_151054_create_message_applications cannot be reverted.\n";
-
-        return false;
+        $this->dropTable('{{%application_requests}}');
     }
 
     /*

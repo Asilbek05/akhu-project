@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Logs;
 use Yii;
 use common\models\User;
 use yii\web\Controller;
@@ -15,14 +16,19 @@ class UserController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['index', 'create', 'update', 'delete'],
+                'denyCallback' => function ($rule, $action) {
+                    Yii::$app->user->logout();
+                    return Yii::$app->response->redirect(['site/login']);
+                },
                 'rules' => [
                     [
                         'allow' => true,
                         'roles' => ['@'],
-                        'matchCallback' => function () {
-                            $user = Yii::$app->user->identity;
-                            return $user && in_array($user->role, ['admin', 'superadmin']);
+                        'matchCallback' => function ($rule, $action) {
+                            if (in_array($action->id, ['delete', 'create'])) {
+                                return Yii::$app->user->identity->role === 'superadmin';
+                            }
+                            return in_array(Yii::$app->user->identity->role, ['admin', 'superadmin']);
                         },
                     ],
                 ],
@@ -41,6 +47,7 @@ class UserController extends Controller
     public function actionCreate()
     {
         $model = new \common\models\User();
+        $model = new User(['scenario' => 'create']);
 
         if ($model->load(Yii::$app->request->post())) {
             $model->status = \common\models\User::STATUS_ACTIVE;
@@ -53,6 +60,8 @@ class UserController extends Controller
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'User successfully created.');
+                Logs::add('user-create', 'User yaratildi: ' . $model->username, 'create');
+
                 return $this->redirect(['index']);
             }
         }
@@ -66,16 +75,35 @@ class UserController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->scenario = 'update';
 
         if ($model->role === 'superadmin' && Yii::$app->user->identity->role !== 'superadmin') {
             throw new \yii\web\ForbiddenHttpException('Siz superadminni o‘zgartira olmaysiz.');
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
-        }
+        if ($model->load(Yii::$app->request->post())) {
+            if (!empty($model->password)) {
+                $model->password_hash = Yii::$app->security->generatePasswordHash($model->password);
+            }
 
+            $model->updated_at = time();
+
+            if ($model->save(false)) {
+                Logs::add('user-update', 'User tahrirlandi: ' . $model->username, 'update');
+                Yii::$app->session->setFlash('success', 'Foydalanuvchi muvaffaqiyatli tahrirlandi.');
+
+                return $this->redirect(['index']);
+            }
+        }
         return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+    public function actionLoadUpdateForm($id)
+    {
+        $model = $this->findModel($id);
+
+        return $this->renderAjax('_update_form_wrapper', [
             'model' => $model,
         ]);
     }
@@ -86,7 +114,7 @@ class UserController extends Controller
         if ($model->role === 'superadmin') {
             throw new \yii\web\ForbiddenHttpException('Superadmin foydalanuvchisini o‘chirish mumkin emas.');
         }
-
+        Logs::add('user-delete', 'User o`chirildi: ' . $model->username, 'delete');
         $model->delete();
 
         return $this->redirect(['index']);
@@ -110,6 +138,8 @@ class UserController extends Controller
             $model->generateAuthKey();
             if ($model->save(false)) {
                 Yii::$app->session->setFlash('success', 'Password changed successfully.');
+                Logs::add('user-password', 'Parol o`zgartirildi: ' . $model->username, 'update');
+
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }

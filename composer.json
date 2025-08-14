@@ -24,7 +24,12 @@
         "kartik-v/yii2-widget-datepicker": "^1.4",
         "kartik-v/yii2-widget-timepicker": "^1.0",
         "wbraganca/yii2-dynamicform": "^2.0",
-        "kartik-v/yii2-widget-growl": "@dev"
+        "kartik-v/yii2-widget-growl": "@dev",
+        "kartik-v/yii2-grid": "^3.5",
+        "kartik-v/yii2-widget-select2": "^2.2",
+        "kartik-v/yii2-date-range": "@dev",
+        "kartik-v/yii2-export": "^1.4",
+      "himiklab/yii2-recaptcha-widget": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

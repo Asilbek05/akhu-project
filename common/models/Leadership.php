@@ -36,9 +36,25 @@ class Leadership extends \yii\db\ActiveRecord
             ],
         ];
     }
+    public function init()
+    {
+        parent::init();
+        if ($this->isNewRecord && empty($this->phone)) {
+            $this->phone = '+998 ';
+        }
+    }
 
     public $photoFile;
 
+    public function scenarios()
+    {
+        $scenarios = parent::scenarios();
+
+        $scenarios['create'] = ['name', 'position', 'email', 'phone', 'photoFile'];
+        $scenarios['update'] = ['name', 'position', 'email', 'phone', 'photoFile'];
+
+        return $scenarios;
+    }
     /**
      * {@inheritdoc}
      */
@@ -55,12 +71,14 @@ class Leadership extends \yii\db\ActiveRecord
         return [
             [['sort_order'], 'default', 'value' => 0],
             [['name', 'position','email', 'phone', 'photo'], 'required'],
+            ['phone', 'match', 'pattern' => '/^\+998 \(\d{2}\) \d{3}-\d{2}-\d{2}$/', 'message' => 'Telefon formatida bo‘lishi kerak: +998 (XX) XXX-XX-XX'],
             ['email', 'email'],
             [['sort_order'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name', 'position', 'email', 'phone', 'photo'], 'string', 'max' => 255],
             [['photoFile'], 'required', 'on' => 'create'],
-            [['photoFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif'],
+            ['photoFile', 'file', 'extensions' => 'jpg, png, jpeg, webp', 'skipOnEmpty' => false, 'on' => 'create'],
+            ['photoFile', 'file', 'extensions' => 'jpg, png, jpeg, webp', 'skipOnEmpty' => true,  'on' => 'update'],
         ];
     }
 
@@ -95,25 +113,30 @@ class Leadership extends \yii\db\ActiveRecord
     public function uploadPhoto()
     {
         if ($this->photoFile) {
-            $dir = Yii::getAlias('@frontend/web/uploads/leadership/');
+            $dir = Yii::getAlias('@frontend/web/uploads/leadership');
             if (!is_dir($dir)) {
-                mkdir($dir, 0775, true);
+                mkdir($dir, 0777, true);
             }
+            $fileName = uniqid('leader_') . '.' . $this->photoFile->extension;
+            $filePath = $dir . '/' . $fileName;
 
-            $filename = uniqid() . '.' . $this->photoFile->extension;
-            $path = $dir . $filename;
-
-            if ($this->photoFile->saveAs($path)) {
-                $this->photo = '/uploads/leadership/' . $filename;
+            if ($this->photoFile->saveAs($filePath)) {
+                if (!$this->isNewRecord && $this->photo && file_exists($dir . '/' . $this->photo)) {
+                    @unlink($dir . '/' . $this->photo);
+                }
+                $this->photo = $fileName;
                 return true;
             }
         }
-
-        return true;
+        return false;
     }
 
-
-
+    public function getPhotoUrl()
+    {
+        return $this->photo
+            ? Yii::$app->params['uploadBaseUrl'] . '/leadership/' . $this->photo
+            : null;
+    }
     public function beforeSave($insert)
     {
         if ($insert && empty($this->sort_order)) {

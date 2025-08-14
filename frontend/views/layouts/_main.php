@@ -95,12 +95,12 @@ $location = $settings->location ?? 'Location not set';
                                     </li>
 
                                     <li class="menu-item-has-children">
-                                        <a href="<?= \yii\helpers\Url::to(['/site/admissions']) ?>">Admissions</a>
+                                        <a href="<?= \yii\helpers\Url::to(['/admissions/admission-overview']) ?>">Admissions</a>
                                         <ul class="submenu">
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/admissions']) ?>">Admission Overview</a></li>
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/fees']) ?>">Tuition Fees & Scholarships</a></li>
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/calculator']) ?>">Calculator</a></li>
-                                            <li><a href="<?= \yii\helpers\Url::to(['/application/create']) ?>">Apply Now</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/admissions/admission-overview']) ?>">Admission Overview</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['admissions/tuition-fees']) ?>">Tuition Fees & Scholarships</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['admissions/calculator']) ?>">Calculator</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/admissions/apply-now']) ?>">Apply Now</a></li>
                                         </ul>
                                     </li>
 

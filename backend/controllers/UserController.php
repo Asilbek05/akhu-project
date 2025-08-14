@@ -88,7 +88,7 @@ class UserController extends Controller
 
             $model->updated_at = time();
 
-            if ($model->save(false)) { // validatsiyani oldin bajargan bo‘lsak, false qo‘yish mumkin
+            if ($model->save(false)) {
                 Logs::add('user-update', 'User tahrirlandi: ' . $model->username, 'update');
                 Yii::$app->session->setFlash('success', 'Foydalanuvchi muvaffaqiyatli tahrirlandi.');
 
@@ -99,7 +99,6 @@ class UserController extends Controller
             'model' => $model,
         ]);
     }
-
     public function actionLoadUpdateForm($id)
     {
         $model = $this->findModel($id);

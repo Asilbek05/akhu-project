@@ -132,11 +132,67 @@ JS);
         </div>
 
         <?php Modal::begin([
-            'id' => 'statsModal',
-            'title' => '<i class="ki-duotone ki-chart-line-up fs-4 me-2"></i> Xabarlar Statistkasi',
-            'size' => 'modal-sm',
-            'options' => ['class' => 'fade'],
+                'id' => 'statsModal',
+                'title' => '<i class="ki-duotone ki-chart-line-up fs-4 me-2"></i> Xabarlar Statistikasi',
+                'size' => 'modal-lg', // Oynani kattalashtirish uchun "modal-lg" klassidan foydalanildi
+                'options' => ['class' => 'fade'],
         ]); ?>
+
+        <div class="modal-body p-8">
+            <div class="row g-5">
+
+                <div class="col-md-4">
+                    <div class="card bg-light-info h-100">
+                        <div class="card-body p-6 d-flex flex-column align-items-center text-center">
+                    <span class="svg-icon svg-icon-3x svg-icon-info mb-5">
+                        <i class="ki-duotone ki-messages fs-2x text-info">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                    </span>
+                            <h3 class="fw-bold text-info fs-2x mt-3"><?= $Count ?></h3>
+                            <p class="text-info fw-bold fs-5 mb-0">Umumiy xabarlar</p>
+                            <span class="text-muted fs-7">Jami xabarlar soni</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card bg-light-success h-100">
+                        <div class="card-body p-6 d-flex flex-column align-items-center text-center">
+                    <span class="svg-icon svg-icon-3x svg-icon-success mb-5">
+                        <i class="ki-duotone ki-eye fs-2x text-success">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    </span>
+                            <h3 class="fw-bold text-success fs-2x mt-3"><?= $viewCount ?></h3>
+                            <p class="text-success fw-bold fs-5 mb-0">Ko'rilgan xabarlar</p>
+                            <span class="text-muted fs-7">O'qilgan xabarlar soni</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card bg-light-warning h-100">
+                        <div class="card-body p-6 d-flex flex-column align-items-center text-center">
+                    <span class="svg-icon svg-icon-3x svg-icon-warning mb-5">
+                        <i class="ki-duotone ki-notification-status fs-2x text-warning">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                    </span>
+                            <h3 class="fw-bold text-warning fs-2x mt-3"><?= $noviewCount ?></h3>
+                            <p class="text-warning fw-bold fs-5 mb-0">Ko'rilmagan xabarlar</p>
+                            <span class="text-muted fs-7">O'qilmagan xabarlar soni</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <?php Modal::end(); ?>
 
         <div class="card card-flush shadow-sm mb-5">

@@ -1,16 +1,13 @@
 <?php
-
 namespace frontend\assets;
 
 use yii\web\AssetBundle;
 
-/**
- * Main frontend application asset bundle.
- */
 class AppAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
+
     public $css = [
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css',
         'css/bootstrap.min.css',
@@ -23,8 +20,8 @@ class AppAsset extends AssetBundle
         'css/nice-select.css',
         'css/main.css',
     ];
+
     public $js = [
-        // 'js/jquery-3.7.1.min.js',
         'js/bootstrap.bundle.min.js',
         'js/swiper.min.js',
         'js/wow.min.js',
@@ -38,9 +35,18 @@ class AppAsset extends AssetBundle
         'js/jquery.magnific-popup.min.js',
         'js/main.js',
     ];
+
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap5\BootstrapAsset', // yoki 'yii\bootstrap\BootstrapAsset' agar bootstrap 3 ishlatsangiz
-        'yii\widgets\ActiveFormAsset',
+        'yii\bootstrap5\BootstrapAsset',
     ];
+
+    public function init()
+    {
+        parent::init();
+
+        $this->js[] = <<<JS
+            new WOW().init();
+        JS;
+    }
 }

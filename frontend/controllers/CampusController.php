@@ -13,5 +13,4 @@ class CampusController extends \yii\web\Controller
     public function actionStudentLife(){
         return $this->render('student-life');
     }
-
 }

@@ -5,6 +5,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\StringHelper;
+$this->params['hideBreadcrumb'] = true;
 $this->title = 'Al-Khwarizmi University';
 
 $name = $slider ? $slider->name : 'Next Generation <br> Engineers & Innovators';

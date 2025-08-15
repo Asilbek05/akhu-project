@@ -26,16 +26,6 @@ $upcomingEvent = Events::find()
         ->one();
 ?>
 
-<section class="events-hero-section">
-    <div class="hero-gradient-bg">
-        <div class="container">
-            <div class="hero-content text-center">
-                <h1 class="hero-title">Our Events</h1>
-                <p class="hero-subtitle">Discover amazing experiences and connect with our community</p>
-            </div>
-        </div>
-    </div>
-</section>
 
 <section class="events-section pt-120 pb-120">
     <div class="container">

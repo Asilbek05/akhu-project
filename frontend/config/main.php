@@ -42,6 +42,8 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'programs/software-engineering/<slug:[\w-]+>' => 'programs/scholarship-details',
+                'programs/software-engineering' => 'programs/software-engineering',
             ],
         ],
 

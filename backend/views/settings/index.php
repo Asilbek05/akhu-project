@@ -30,7 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <!-- MAIN CARD -->
-    <!-- MAIN CARD -->
 
         <div class="card-body">
             <div class="row g-4">

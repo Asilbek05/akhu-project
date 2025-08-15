@@ -3,7 +3,8 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use common\models\Settings;use yii\helpers\Html;
+use common\models\Settings;
+use yii\helpers\Html;
 use frontend\assets\AppAsset;
 
 AppAsset::register($this);
@@ -137,44 +138,45 @@ $location = $settings->location ?? 'Location not set';
                                         <nav class="xb-header-nav">
                                             <ul class="xb-menu-primary clearfix">
                                                 <li class="menu-item menu-item-has-children">
-                                                    <a href="#">About</a>
+                                                    <a href="<?= \yii\helpers\Url::to(['/about/about-us']) ?>">About</a>
                                                     <ul class="sub-menu">
-                                                        <li><a href="#">About Us</a></li>
-                                                        <li><a href="#">Vision & Mision</a></li>
-                                                        <li><a href="#">Presidential Decree</a></li>
-                                                        <li><a href="#">Leadership</a></li>
-                                                        <li><a href="#">Governance & Partners</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/about/about-us']) ?>">About Us</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/about/vision-mission']) ?>">Vision & Mision</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/about/presidential-decree']) ?>">Presidential Decree</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/about/leadership']) ?>">Leadership</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/about/governance-partners']) ?>">Governance & Partners</a></li>
                                                     </ul>
                                                 </li>
                                                 <li class="menu-item menu-item-has-children">
-                                                    <a href="#">Programs</a>
+                                                    <a href="<?= \yii\helpers\Url::to(['/programs/undergraduate']) ?>">Programs</a>
                                                     <ul class="sub-menu">
-                                                        <li><a href="#">Undergraduate</a></li>
-                                                        <li><a href="#">Specialized STEM School</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/programs/undergraduate']) ?>">Undergraduate</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/programs/steam-school']) ?>">Specialized STEM School</a></li>
+                                                        <li> </li>
                                                     </ul>
                                                 </li>
                                                 <li class="menu-item menu-item-has-children">
-                                                    <a href="#">Admissions</a>
+                                                    <a href="<?= \yii\helpers\Url::to(['/admissions/admission-overview']) ?>">Admissions</a>
                                                     <ul class="sub-menu">
-                                                        <li><a href="#">Admission Overview</a></li>
-                                                        <li><a href="#">Tuition Fees & Scholarships</a></li>
-                                                        <li><a href="#">Calculator</a></li>
-                                                        <li><a href="#">Apply Now</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/admissions/admission-overview']) ?>">Admission Overview</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/admissions/tuition-fees']) ?>">Tuition Fees & Scholarships</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/admissions/calculator']) ?>">Calculator</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/admissions/apply-now']) ?>">Apply Now</a></li>
                                                     </ul>
                                                 </li>
                                                 <li class="menu-item menu-item-has-children">
-                                                    <a href="#">Campus</a>
+                                                    <a href="<?= \yii\helpers\Url::to(['/campus/location-facilities']) ?>">Campus</a>
                                                     <ul class="sub-menu">
-                                                        <li><a href="#">Location & Facilities</a></li>
-                                                        <li><a href="#">Student Life</a></li>
-                                                        <li><a href="#">Future Campus Plan</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/campus/location-facilities']) ?>">Location & Facilities</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/campus/student-life']) ?>">Student Life</a></li>
+                                                        <li><a href="<?= \yii\helpers\Url::to(['/campus/future-campus']) ?>">Future Campus Plan</a></li>
                                                     </ul>
                                                 </li>
                                                 <li class="menu-item">
-                                                    <a href="#">News & Events</a>
+                                                    <a href="<?= \yii\helpers\Url::to(['/posts']) ?>">News & Events</a>
                                                 </li>
                                                 <li class="menu-item">
-                                                    <a href="#">Contact us</a>
+                                                    <a href="<?= \yii\helpers\Url::to(['/contact']) ?>">Contact us</a>
                                                 </li>
                                             </ul>
                                         </nav>
@@ -235,7 +237,13 @@ $location = $settings->location ?? 'Location not set';
         </div>
         <div class="body-overlay"></div>
 
-        <?= $content ?>
+        <main>
+            <?php if (!($this->params['hideBreadcrumb'] ?? false)): ?>
+                <?= $this->render('partials/_breadcrumbs') ?>
+            <?php endif; ?>
+
+            <?= $content ?>
+        </main>
 
         <footer class="footer clg-footer bg_img pos-rel footer-bg-main">
             <div class="container">

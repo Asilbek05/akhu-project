@@ -76,21 +76,21 @@ $location = $settings->location ?? 'Location not set';
                             <nav class="main-menu collapse navbar-collapse">
                                 <ul>
                                     <li class="menu-item-has-children">
-                                        <a href="<?= \yii\helpers\Url::to(['/site/about']) ?>">About</a>
+                                        <a href="<?= \yii\helpers\Url::to(['/about/about-us']) ?>">About</a>
                                         <ul class="submenu">
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/about']) ?>">About Us</a></li>
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/vision']) ?>">Vision & Mision</a></li>
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/decree']) ?>">Presidential Decree</a></li>
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/leadership']) ?>">Leadership</a></li>
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/partners']) ?>">Governance & Partners</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/about/about-us']) ?>">About Us</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/about/vision-mission']) ?>">Vision & Mision</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/about/presidential-decree']) ?>">Presidential Decree</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/about/leadership']) ?>">Leadership</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/about/governance-partners']) ?>">Governance & Partners</a></li>
                                         </ul>
                                     </li>
 
                                     <li class="menu-item-has-children">
-                                        <a href="<?= \yii\helpers\Url::to(['/site/programs']) ?>">Programs</a>
+                                        <a href="<?= \yii\helpers\Url::to(['/programs/undergraduate']) ?>">Programs</a>
                                         <ul class="submenu">
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/undergraduate']) ?>">Undergraduate</a></li>
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/stem']) ?>">Specialized STEM School</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/programs/undergraduate']) ?>">Undergraduate</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/programs/steam-school']) ?>">Specialized STEM School</a></li>
                                         </ul>
                                     </li>
 
@@ -105,11 +105,11 @@ $location = $settings->location ?? 'Location not set';
                                     </li>
 
                                     <li class="menu-item-has-children">
-                                        <a href="<?= \yii\helpers\Url::to(['/site/campus']) ?>">Campus</a>
+                                        <a href="<?= \yii\helpers\Url::to(['/campus/location-facilities']) ?>">Campus</a>
                                         <ul class="submenu">
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/location']) ?>">Location & Facilities</a></li>
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/student-life']) ?>">Student Life</a></li>
-                                            <li><a href="<?= \yii\helpers\Url::to(['/site/future-campus']) ?>">Future Campus Plan</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/campus/location-facilities']) ?>">Location & Facilities</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/campus/student-life']) ?>">Student Life</a></li>
+                                            <li><a href="<?= \yii\helpers\Url::to(['/campus/future-campus']) ?>">Future Campus Plan</a></li>
                                         </ul>
                                     </li>
 
